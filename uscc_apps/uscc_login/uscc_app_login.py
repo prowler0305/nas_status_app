@@ -44,6 +44,7 @@ class Login(MethodView):
             self.client_referrer = request.args.get('referrer')
             auth_response = requests.post(api.url_for(Authenticate, _external=True), data=json.dumps(self.auth_data),
                                           headers=self.headers)
+            uscc_eng_app.logger.info(auth_response.text)
             auth_response_text_dict = json.loads(auth_response.text)
             if auth_response.status_code == requests.codes.ok:
                 login_data_dict = json.loads(auth_response.text)
