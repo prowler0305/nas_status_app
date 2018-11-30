@@ -36,6 +36,12 @@ class ContainerStatus(MethodView):
         with open(os.environ.get('container_status_path')) as csfh:
             self.container_status_dict = json.load(csfh)
 
+        if request.url_rule.rule == '/nas_status':
+            if 'nas_production' in self.container_status_dict:
+                return render_template('container_status/nas_prod_status.html', cs=self.container_status_dict.get('nas_production'))
+            else:
+                return render_template('container_status/nas_prod_status.html')
+
         return render_template('container_status/container_status.html', cs=self.container_status_dict)
 
     def post(self):

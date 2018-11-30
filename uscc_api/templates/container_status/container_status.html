@@ -18,21 +18,23 @@
     </nav>
     <div class="row mt-1">
         {% for container_name, container_status_data in cs.items() %}
-            <div class="col-sm-6">
-                <div class="card border-primary">
-                    <div class="card-body">
-                        {% if container_status_data.status == 'open' %}
-                            <h5 class="card-title">NAS Platform {{container_status_data.display_name}} <span class="badge badge-success">{{container_status_data.status}}</span></h5>
-                        {% else %}
-                            <h5 class="card-title">NAS Platform {{container_status_data.display_name}} <span class="badge badge-danger">{{container_status_data.status}}</span></h5>
-                        {% endif %}
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">Time Frame: {{container_status_data.time_frame.start_date}} - {{container_status_data.time_frame.end_date}}</li>
-                            <li class="list-group-item">Point of Contact: {{container_status_data.poc.name}} <a href="mailto:{{container_status_data.poc.email}}">{{container_status_data.poc.email}}</a></li>
-                        </ul>
+            {% if container_name != "nas_production" %}
+                <div class="col-sm-6">
+                    <div class="card border-primary">
+                        <div class="card-body">
+                            {% if container_status_data.status == 'open' %}
+                                <h5 class="card-title">NAS Platform {{container_status_data.display_name}} <span class="badge badge-success">{{container_status_data.status}}</span></h5>
+                            {% else %}
+                                <h5 class="card-title">NAS Platform {{container_status_data.display_name}} <span class="badge badge-danger">{{container_status_data.status}}</span></h5>
+                            {% endif %}
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Time Frame: {{container_status_data.time_frame.start_date}} - {{container_status_data.time_frame.end_date}}</li>
+                                <li class="list-group-item">Point of Contact: {{container_status_data.poc.name}} <a href="mailto:{{container_status_data.poc.email}}">{{container_status_data.poc.email}}</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
         {% endfor %}
     </div>
 

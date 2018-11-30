@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- BootStrap CSS -->
+    <link rel="stylesheet" media="screen" href={{ url_for('static', filename='bootstrap.min.css') }}>
+    <title>NAS Dev Container Status</title>
+</head>
+<body>
+    <!-- Image and text -->
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">
+            <img src="/static/usc_logo.jpg" width="30" class="d-inline-block align-top" alt="U.S. Cellular Logo">
+            NAS Automation Status
+        </a>
+    </nav>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            {% if cs.status == "ACTIVE" %}
+                <h1 class="display-4">{{cs.display_name}}<span class="badge badge-success">{{cs.status}}</span></h1>
+            {% else %}
+                <h1 class="display-4">{{cs.display_name}}<span class="badge badge-danger">{{cs.status}}</span></h1>
+                <p class="lead">Unavailable Applications</p>
+                <ul class="list-group">
+                    {% for application in cs.applications %}
+                    <li class="list-group-item">{{application}}</li>
+                    {% endfor %}
+                </ul>
+
+                <p class="lead">Expected to be restored by:</p>
+                <p class="lead">{{cs.restored_by}}</p>
+            {% endif %}
+
+        </div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="../../static/bootstrap.min.js"></script>
+</body>
+</html>
