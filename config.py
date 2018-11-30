@@ -16,12 +16,14 @@ class BaseConfig:
     JWT_TOKEN_LOCATION = ['cookies']
     JWT_BLACKLIST_ENABLED = True
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
+    PREFERRED_URL_SCHEME = 'https'
 
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     PORT = 5000 if os.environ.get("PORT") is None else int(os.environ.get("PORT"))
     HOST = os.environ.get('HOST') or 'localhost'
+    PREFERRED_URL_SCHEME = 'http'
     if os.environ.get('access_token_expiration') is not None:
         JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(seconds=int(os.environ.get('access_token_expiration')))
     if os.environ.get('refresh_token_expiration') is not None:
