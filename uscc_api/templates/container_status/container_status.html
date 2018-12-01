@@ -29,7 +29,9 @@
                             {% endif %}
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">Time Frame: {{container_status_data.time_frame.start_date}} - {{container_status_data.time_frame.end_date}}</li>
-                                <li class="list-group-item">Point of Contact: {{container_status_data.poc.name}} <a href="mailto:{{container_status_data.poc.email}}">{{container_status_data.poc.email}}</a></li>
+                                {% for poc_dict in container_status_data.poc %}
+                                    <li class="list-group-item">Point of Contact: <a href="mailto:{{ poc_dict.email }}">{{poc_dict.name}}</a></li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
