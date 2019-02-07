@@ -22,17 +22,40 @@
                 <h1 class="display-4">{{cs.display_name}}<span class="badge badge-success">{{cs.status}}</span></h1>
             {% else %}
                 <h1 class="display-4">{{cs.display_name}}<span class="badge badge-danger">{{cs.status}}</span></h1>
-                <p class="lead">Unavailable Applications</p>
-                <ul class="list-group">
-                    {% for application in cs.applications %}
-                    <li class="list-group-item">{{application}}</li>
-                    {% endfor %}
-                </ul>
-
-                <p class="lead">Expected to be restored by:</p>
-                <p class="lead">{{cs.restored_by}}</p>
             {% endif %}
 
+        </div>
+    </div>
+    <div class="card-columns">
+        {% if cs.status == "NOT ACTIVE" %}
+            <div class="card">
+                <h5 class="card-header bg-danger text-white">Applications Affected</h5>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for application in cs.applications %}
+                            <li class="list-group-item">{{application}}</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="alert alert-info" role="alert">
+                        <p class="lead">Expected to be restored by:</p>
+                        <p class="lead">{{cs.restored_by}}</p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="card">
+                <h5 class="card-header bg-success text-white">Applications Affected</h5>
+                <div class="card-body">
+                    <p>All applications up and available.</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="card">
+            <h5 class="card-header bg-secondary text-white">Contact Us</h5>
+            <div class="card-body">
+                <p>For questions, contact <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Automation Engineering team.</a></p>
+            </div>
         </div>
     </div>
     <!-- Optional JavaScript -->
