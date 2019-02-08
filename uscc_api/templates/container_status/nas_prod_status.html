@@ -2,11 +2,12 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
+{#    <meta http-equiv="refresh" content="10">#}
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- BootStrap CSS -->
     <link rel="stylesheet" media="screen" href={{ url_for('static', filename='bootstrap.min.css') }}>
-    <title>NAS Dev Container Status</title>
+    <title>NAS Platform Status</title>
 </head>
 <body>
     <!-- Image and text -->
@@ -26,35 +27,91 @@
 
         </div>
     </div>
-    <div class="card-columns">
-        {% if cs.status == "NOT ACTIVE" %}
-            <div class="card">
-                <h5 class="card-header bg-danger text-white">Applications Affected</h5>
-                <div class="card-body">
-                    <ul class="list-group">
-                        {% for application in cs.applications %}
-                            <li class="list-group-item">{{application}}</li>
-                        {% endfor %}
-                    </ul>
-                    <div class="alert alert-info" role="alert">
-                        <p class="lead">Expected to be restored by:</p>
-                        <p class="lead">{{cs.restored_by}}</p>
+    <div class="container">
+        <div class="row">
+            <div class="card-deck">
+                {% if cs.status == "NOT ACTIVE" %}
+                    <div class="card">
+                        <h5 class="card-header bg-danger text-white">Applications Affected</h5>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                {% for application in cs.applications %}
+                                    <li class="list-group-item">{{application}}</li>
+                                {% endfor %}
+                            </ul>
+                            <div class="alert alert-info" role="alert">
+                                <p class="lead">Expected to be restored by:</p>
+                                <p class="lead">{{cs.restored_by}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card">
+                        <h5 class="card-header bg-success text-white">Applications Affected</h5>
+                        <div class="card-body">
+                            <p>All applications up and available.</p>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="card">
+                    <h5 class="card-header bg-secondary text-white">Contact Us</h5>
+                    <div class="card-body">
+                        <p>For questions, click the link to generate an email to the <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Core Automation Engineering team.</a></p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h5 class="card-header bg-secondary text-white">User Guides</h5>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/Deloitte/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-primary">
+                                VLAN and AGG Router Health Check
+                            </a>
+                            <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/EtherSAMDrop34/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-danger">
+                                EtherSAM
+                            </a>
+                            <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/SeGW/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-warning">
+                                Security Gateway Health Check
+                            </a>
+                        <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/PAM_Reset/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-success">
+                                PAM Reset
+                            </a>
+                        <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/EBAAuto/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-dark">
+                                EBA
+                            </a>
+                        </ul>
                     </div>
                 </div>
             </div>
-        {% else %}
-            <div class="card">
-                <h5 class="card-header bg-success text-white">Applications Affected</h5>
-                <div class="card-body">
-                    <p>All applications up and available.</p>
-                </div>
-            </div>
-        {% endif %}
+        </div>
+    </div>
 
-        <div class="card">
-            <h5 class="card-header bg-secondary text-white">Contact Us</h5>
-            <div class="card-body">
-                <p>For questions, contact <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Automation Engineering team.</a></p>
+    <div class="card border-warning ml-3 mr-3">
+        <div class="card-body">
+            <h5 class="card-title">Known Issues</h5>
+            <div class="accordion mt-3" id="knownIssuesaccordion">
+                <div class="card">
+                    <div class="card-header bg-warning" id="ethersamUIWorkaroundHeading">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#ethersamUI" aria-expanded="false" aria-controls="ethersamUI">
+                            Ethersam UI long response time on test progress
+                        </button>
+                    </div>
+                    <div id="ethersamUI" class="collapse hide" aria-labelledby="ethersamUIWorkaroundHeading" data-parent="#knownIssuesaccordion">
+                        <div class="card-body">
+                            <p>We have found a minor issue with the EtherSAM Nokia Single Site automation. While running the EtherSAM automation a user may experience what appears to be a long response time or lack of updates on the automation progress (while it appears automation has stalled, in fact the automation is continuing to run).</p>
+                            To work around this issue:
+                            <ul class="list-group">
+                                <li class="list-group-item">1)	Open a new browser session</li>
+                                <li class="list-group-item">2)	Type in your Site ID</li>
+                                <li class="list-group-item">3)	Select the log history</li>
+                                <li class="list-group-item">4)	Select start and end date</li>
+                                <li class="list-group-item">5)	Select show log</li>
+                                <li class="list-group-item">6)	Select “view test results” for the top entry in the list (if there is more than one test result available)</li>
+                                <li class="list-group-item">7)	Tail the active log by periodically doing a browser refresh</li>
+                            </ul>
+                            This will be fixed in the next release of the NAS Platform.
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
