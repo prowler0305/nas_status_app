@@ -2,7 +2,7 @@ import collections
 import os
 from flask import jsonify, flash, Response, json
 from flask_restful import reqparse
-from config import uscc_app_dir
+from config import container_status_app_dir
 
 
 class Common(object):
@@ -134,7 +134,7 @@ class Common(object):
         return os.path.exists(path)
 
     @staticmethod
-    def find_file_in_project(file_name: str, path=uscc_app_dir, relative_path: bool=True):
+    def find_file_in_project(file_name: str, path=container_status_app_dir, relative_path: bool=True):
         """
         Find a given file in the application directory tree structure and return its relative path to the root app dir.
 

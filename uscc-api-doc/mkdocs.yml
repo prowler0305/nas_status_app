@@ -1,7 +1,0 @@
-site_name: U.S. Cellular Engineering REST API
-
-pages:
-  - Introduction: index.md
-  - Getting Started: getting-started.md
-  - IMSI Web Tracker Test Plan: imsi_web_tracker_test_cases.md
-  - About API via Mkdocs: about-api-mkdocs.md

@@ -1,15 +1,12 @@
 # Flask
-from flask import render_template, redirect, request, url_for, abort, make_response
+from flask import render_template, request
 from flask.views import MethodView
 
 # USCC
-from resources.logout import Logout
-from uscc_api import api, uscc_eng_app
-from uscc_apps.dev_container_status.forms import ContainerForm
+from container_status_app.forms import ContainerForm
 from common.common import Common
 
 # Misc
-import requests
 import json
 import os
 
@@ -17,13 +14,6 @@ import os
 class UpdateContainer(MethodView):
     def __init__(self):
 
-        # self.imsi_header = {'Authorization': None}
-        # self.imsi_tracking_dict = dict(imsi=None,
-        #                                userid=None,
-        #                                email=None
-        #                                )
-        # self.imsi_list_get_resp = None
-        self.login_redirect_response = None
         self.container_status_dict = None
 
     def get(self):
@@ -50,12 +40,6 @@ class UpdateContainer(MethodView):
         if request.cookies.get('access_token_cookie') is None:
             self.redirect_to_uscc_login()
             return self.login_redirect_response
-        # else:
-        #     # INFO: needed if JWT_TOKEN_LOCATION is set to headers as opposed to in cookies
-        #     # self.imsi_header['Authorization'] = 'JWT {}'.format(request.cookies.get('access_token_cookie'))
-        #     # INFO: With JWT in cookies set the CSRF token is still expected to be in the header for POST to succeed
-        #     self.imsi_header['X-CSRF-TOKEN'] = request.cookies.get('csrf_access_token')
-        #     self.imsi_header['content_type'] = 'application/json'
 
         form = ContainerForm()
 
@@ -106,13 +90,3 @@ class UpdateContainer(MethodView):
 
         with open(os.environ.get('container_status_path'),mode='w') as cswfh:
             json.dump(status_file_dict, cswfh)
-
-    def redirect_to_uscc_login(self):
-        """
-        Redirects to the USCC Login application
-        :return: redirect response
-        """
-
-        self.login_redirect_response = redirect(os.environ.get('login_app') + '?referrer=' +
-                                                url_for('update_container', _external=True))
-        return

@@ -1,7 +1,9 @@
-from uscc_api import uscc_eng_app
+from container_status_app import container_status_app
 
 
 if __name__ == '__main__':
 
-    uscc_eng_app.run(debug=uscc_eng_app.config.get('DEBUG'), threaded=uscc_eng_app.config.get('THREADED'),
-                     port=uscc_eng_app.config.get('PORT'), host=uscc_eng_app.config.get('HOST'))
+    container_status_app.run(debug=container_status_app.config.get('DEBUG'),
+                             threaded=container_status_app.config.get('THREADED'),
+                             port=container_status_app.config.get('PORT'),
+                             host=container_status_app.config.get('HOST'))
