@@ -1,2 +1,2 @@
-# USCC Engineering API_api_manager
-View the [internal documentation](https://ilscha03-github-01.uscc.com/pages/uscc-engineering/USCC_API/)
+# NAS Platform Container Status App
+Contains a FlaskRestful framework based app that is used to display information about the different container sets that make up the NAS Platform across Openshift Namespaces.
