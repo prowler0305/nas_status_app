@@ -32,7 +32,7 @@
             <div class="card-deck">
 {#                {% if cs.overall_status == "NOT ACTIVE" %}#}
                     <div class="card">
-                        <h5 class="card-header bg-danger text-white">NOT ACTIVE</h5>
+                        <h5 class="card-header bg-danger text-white">Not Available</h5>
                         <div class="card-body">
                             <ul class="list-group">
                                 {% for application, app_status in cs.applications.items() %}
@@ -54,7 +54,7 @@
                     </div>
 {#                {% else %}#}
                     <div class="card">
-                        <h5 class="card-header bg-success text-white">ACTIVE</h5>
+                        <h5 class="card-header bg-success text-white">Available</h5>
                         <div class="card-body">
                             {% if cs.overall_status == 'ACTIVE' %}
                                 <ul class="list-group">
