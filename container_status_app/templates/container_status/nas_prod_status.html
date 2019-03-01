@@ -19,10 +19,10 @@
     </nav>
     <div class="jumbotron jumbotron-fluid">
         <div class="container">
-            {% if cs.status == "ACTIVE" %}
-                <h1 class="display-4">{{cs.display_name}}<span class="badge badge-success">{{cs.status}}</span></h1>
+            {% if cs.overall_status == "ACTIVE" %}
+                <h1 class="display-4">{{cs.display_name}}<span class="badge badge-success">{{cs.overall_status}}</span></h1>
             {% else %}
-                <h1 class="display-4">{{cs.display_name}}<span class="badge badge-danger">{{cs.status}}</span></h1>
+                <h1 class="display-4">{{cs.display_name}}<span class="badge badge-danger">{{cs.overall_status}}</span></h1>
             {% endif %}
 
         </div>
@@ -30,29 +30,44 @@
     <div class="container">
         <div class="row">
             <div class="card-deck">
-                {% if cs.status == "NOT ACTIVE" %}
+{#                {% if cs.overall_status == "NOT ACTIVE" %}#}
                     <div class="card">
-                        <h5 class="card-header bg-danger text-white">Applications Affected</h5>
+                        <h5 class="card-header bg-danger text-white">NOT ACTIVE</h5>
                         <div class="card-body">
                             <ul class="list-group">
-                                {% for application in cs.applications %}
-                                    <li class="list-group-item">{{application}}</li>
+                                {% for application, app_status in cs.applications.items() %}
+                                    {% if cs.overall_status == 'NOT ACTIVE' %}
+                                        {%  set app_status  = 'NOT ACTIVE' %}
+                                    {% endif %}
+                                    {% if app_status == 'NOT ACTIVE' %}
+                                        <li class="list-group-item">{{application}}</li>
+                                    {% endif %}
                                 {% endfor %}
                             </ul>
-                            <div class="alert alert-info" role="alert">
-                                <p class="lead">Expected to be restored by:</p>
-                                <p class="lead">{{cs.restored_by}}</p>
-                            </div>
+                            {% if cs.overall_status == 'NOT ACTIVE'  %}
+                                <div class="alert alert-info" role="alert">
+                                    <p class="lead">Expected to be restored by:</p>
+                                    <p class="lead">{{cs.restored_by}}</p>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
-                {% else %}
+{#                {% else %}#}
                     <div class="card">
-                        <h5 class="card-header bg-success text-white">Applications Affected</h5>
+                        <h5 class="card-header bg-success text-white">ACTIVE</h5>
                         <div class="card-body">
-                            <p>All applications up and available.</p>
+                            {% if cs.overall_status == 'ACTIVE' %}
+                                <ul class="list-group">
+                                    {% for application, app_status in cs.applications.items() %}
+                                        {% if app_status == 'ACTIVE' %}
+                                            <li class="list-group-item">{{application}}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         </div>
                     </div>
-                {% endif %}
+{#                {% endif %}#}
                 <div class="card">
                     <h5 class="card-header bg-secondary text-white">Contact Us</h5>
                     <div class="card-body">
@@ -96,7 +111,7 @@
             <div class="accordion" id="knownIssuesaccordion">
                 <div class="card">
                     <div class="card-header bg-warning" id="ethersamUIWorkaroundHeading">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#ethersamUI" aria-expanded="false" aria-controls="ethersamUI">
+                        <button class="btn btn-link btn-block text-dark text-left" type="button" data-toggle="collapse" data-target="#ethersamUI" aria-expanded="false" aria-controls="ethersamUI">
                             Ethersam UI long response time on test progress
                         </button>
                     </div>

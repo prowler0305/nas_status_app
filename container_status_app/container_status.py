@@ -31,3 +31,25 @@ class ContainerStatus(MethodView):
                 return render_template('container_status/nas_prod_status.html')
 
         return render_template('container_status/container_status.html', cs=self.container_status_dict)
+
+
+
+# from email.mime.multipart import MIMEMultipart
+# import smtplib
+# msg = MIMEMultipart()
+# msg['Subject'] = 'Email from Python code Test'
+# msg['From'] = 'SA3CoreAutomationTeam@noreply.com'
+# msg['To'] = 'Andrew.Spear@uscellular.com'
+# msg.preamble = 'Email from Python code Test'
+# server = smtplib.SMTP('Corpmta.uscc.com', 25)
+# server.sendmail('SA3CoreAutomationTeam@noreply.com', 'Andrew.Spear@uscellular.com', msg.as_string())
+
+# import smtplib
+# from email.message import EmailMessage
+# msg = EmailMessage()
+# msg.set_content("NAS Platform will be down")
+# msg['Subject'] = "NAS Platform Status"
+# msg['From'] = 'SA3CoreAutomationTeam@noreply.com'
+# msg['To'] = 'Andrew.Spear@uscellular.com'
+# server = smtplib.SMTP('Corpmta.uscc.com', 25)
+# server.send_message(msg)
