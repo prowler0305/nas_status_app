@@ -8,12 +8,17 @@ from common.common import Common
 # Misc
 import json
 import os
+from services.email import EmailServices
 
 
 class ContainerStatus(MethodView):
     def __init__(self):
 
         self.container_status_dict = None
+        self.nas_down_email = dict(subject='NAS Automation Platform Outage',
+                                   from_addr='SA3CoreAutomationTeam@noreply.com',
+                                   to_addr='Andrew.Spear@uscellular.com',
+                                   content='There will be an outage with the NAS Automation Platform on Saturday')
 
     def get(self):
         """
@@ -25,6 +30,11 @@ class ContainerStatus(MethodView):
             self.container_status_dict = json.load(csfh)
 
         if request.url_rule.rule == '/nas_status':
+            email = EmailServices(subject=self.nas_down_email.get('subject'),
+                                  from_address=self.nas_down_email.get('from_addr'),
+                                  to_address=self.nas_down_email.get('to_addr'))
+            email.send_email(self.nas_down_email.get('content'))
+
             if 'nas_production' in self.container_status_dict:
                 return render_template('container_status/nas_prod_status.html', cs=self.container_status_dict.get('nas_production'))
             else:
