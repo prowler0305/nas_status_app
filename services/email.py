@@ -24,11 +24,11 @@ class EmailServices(object):
         :return: True/False
         """
         self.message_object.set_content(email_content)
-        if subject:
+        if subject is None:
             subject = self.subject
-        if from_address:
+        if from_address is None:
             from_address = self.from_address
-        if to_address:
+        if to_address is None:
             to_address = self.to_address
 
         self.message_object['Subject'] = subject

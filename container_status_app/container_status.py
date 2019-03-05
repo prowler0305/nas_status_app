@@ -8,17 +8,18 @@ from common.common import Common
 # Misc
 import json
 import os
-from services.email import EmailServices
 
 
 class ContainerStatus(MethodView):
     def __init__(self):
 
         self.container_status_dict = None
+        self.notify_email_dict = None
         self.nas_down_email = dict(subject='NAS Automation Platform Outage',
                                    from_addr='SA3CoreAutomationTeam@noreply.com',
                                    to_addr='Andrew.Spear@uscellular.com',
                                    content='There will be an outage with the NAS Automation Platform on Saturday')
+        self.nas_production_html_template = 'container_status/nas_prod_status.html'
 
     def get(self):
         """
@@ -26,40 +27,34 @@ class ContainerStatus(MethodView):
         :return: Renders the html page with all substituted content needed.
         """
 
-        with open(os.environ.get('container_status_path')) as csfh:
-            self.container_status_dict = json.load(csfh)
+        read_json_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
+        if read_json_rc:
+            if request.url_rule.rule == '/nas_status':
+                if 'nas_production' in self.container_status_dict:
+                    return render_template(self.nas_production_html_template, cs=self.container_status_dict.get('nas_production'))
+                else:
+                    return render_template(self.nas_production_html_template)
 
-        if request.url_rule.rule == '/nas_status':
-            email = EmailServices(subject=self.nas_down_email.get('subject'),
-                                  from_address=self.nas_down_email.get('from_addr'),
-                                  to_address=self.nas_down_email.get('to_addr'))
-            email.send_email(self.nas_down_email.get('content'))
+            return render_template(self.nas_production_html_template, cs=self.container_status_dict)
 
-            if 'nas_production' in self.container_status_dict:
-                return render_template('container_status/nas_prod_status.html', cs=self.container_status_dict.get('nas_production'))
-            else:
-                return render_template('container_status/nas_prod_status.html')
+    def post(self):
+        """
+        Receives control when the Submit button is clicked in the Notifications Card to register an email address.
+        :return: Re-renders the page with the message of whether the email address was registered successfully or not.
+        """
 
-        return render_template('container_status/container_status.html', cs=self.container_status_dict)
+        write_notify_email_file_rc = False
+        read_status_file_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
+        if read_status_file_rc:
+            read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
+            if read_notify_email_file_rc:
+                if request.form.get('email_addr') not in self.notify_email_dict.get('email_address_list'):
+                    self.notify_email_dict.get('email_address_list').append(request.form.get('email_addr'))
+                    write_notify_email_file_rc, write_info = Common.rw_json_file(os.environ.get('notify_emails_path'),
+                                                                                 mode='write',
+                                                                                 output_dict=self.notify_email_dict)
+                else:
+                    write_notify_email_file_rc = True
 
-
-
-# from email.mime.multipart import MIMEMultipart
-# import smtplib
-# msg = MIMEMultipart()
-# msg['Subject'] = 'Email from Python code Test'
-# msg['From'] = 'SA3CoreAutomationTeam@noreply.com'
-# msg['To'] = 'Andrew.Spear@uscellular.com'
-# msg.preamble = 'Email from Python code Test'
-# server = smtplib.SMTP('Corpmta.uscc.com', 25)
-# server.sendmail('SA3CoreAutomationTeam@noreply.com', 'Andrew.Spear@uscellular.com', msg.as_string())
-
-# import smtplib
-# from email.message import EmailMessage
-# msg = EmailMessage()
-# msg.set_content("NAS Platform will be down")
-# msg['Subject'] = "NAS Platform Status"
-# msg['From'] = 'SA3CoreAutomationTeam@noreply.com'
-# msg['To'] = 'Andrew.Spear@uscellular.com'
-# server = smtplib.SMTP('Corpmta.uscc.com', 25)
-# server.send_message(msg)
+        return render_template(self.nas_production_html_template, cs=self.container_status_dict.get('nas_production'),
+                               email_registered=write_notify_email_file_rc)

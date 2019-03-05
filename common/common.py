@@ -125,7 +125,7 @@ class Common(object):
     @staticmethod
     def check_path_exists(path):
         """
-        Check if a file exists within the USCC-ENG-API file structure.
+        Check if a file exists within the file structure.
 
         :param path: Path to the directory or file
         :return: True or False the directory or file exists
@@ -174,3 +174,29 @@ class Common(object):
             return flash(message_dict['message'], category=category_request)
         else:
             return flash(message, category=category_request)
+
+    @staticmethod
+    def rw_json_file(file_path, mode='read', output_dict=None):
+        """
+        Given a path and a IO mode ("read", or "write"), either reads in a JSON and converts it to a
+        dictionary or if "write" then converts the dictionary(output_dict) to JSON and writes it out to the path
+        indicated in which the exists file(if there is one) is truncated.
+
+        :param file_path: Path to a valid formatted JSON file
+        :param mode: Defaults to "read", specify "write" to write out a dictionary to JSON format.
+        :param output_dict: Required if "mode='write') and contains a dictionary object to be converted to JSON format.
+        :return: For mode='read' -> Tuple(True/False, dictionary/None)
+                 For mode='write' -> Tuple(True/False, "file_path written to")
+                 For mode= invalid value -> Tuple (False, error message)
+        """
+
+        if mode == 'read':
+            with open(file_path) as jsrfh:
+                dict_to_return = json.load(jsrfh)
+                return True, dict_to_return
+        elif mode == 'write':
+            with open(file_path, mode='w') as jswfh:
+                json.dump(output_dict, jswfh)
+                return True, file_path
+        else:
+            return False, "Value for parameter 'mode' invalid. Expected 'read' or 'write'"

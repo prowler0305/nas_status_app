@@ -103,6 +103,29 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <h5 class="card-header bg-info">Notifications</h5>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="form-group">
+                                <label for="emailFormControl">Enter an Email address to receive notifications related to the NAS Platform and its applications.</label>
+                                <input type="email" class="form-control" id="emailFormControl" placeholder="name@example.com" name="email_addr" required>
+                                <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                            </div>
+                        </form>
+                        {% if email_registered is defined %}
+                            {% if email_registered is sameas True %}
+                                <div class="alert alert-success" role="alert">Email Registered Successfully</div>
+                            {% else %}
+                                <div class="alert alert-danger" role="alert">Error Registering Email. Please contact SA3 Core Automation Team.</div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="card border-warning mt-3 ml-3 mr-3 mb-3">
