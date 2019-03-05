@@ -46,6 +46,10 @@ class ContainerStatus(MethodView):
         write_notify_email_file_rc = False
         read_status_file_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
         if read_status_file_rc:
+            if not Common.check_path_exists(os.environ.get('notify_emails_path')):
+                with open(os.environ.get('notify_emails_path'), 'w+') as emfh:
+                    emfh.write('{"email_address_list": []}')
+
             read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
             if read_notify_email_file_rc:
                 if request.form.get('email_addr') not in self.notify_email_dict.get('email_address_list'):
