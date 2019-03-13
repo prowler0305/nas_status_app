@@ -31,7 +31,14 @@ class ContainerStatus(MethodView):
         if read_json_rc:
             if request.url_rule.rule == '/nas_status':
                 if 'nas_production' in self.container_status_dict:
-                    return render_template(self.nas_production_html_template, cs=self.container_status_dict.get('nas_production'))
+                    read_email_rc, email_address_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
+                    if read_email_rc and type(email_address_dict) is dict:
+                        return render_template(self.nas_production_html_template,
+                                               cs=self.container_status_dict.get('nas_production'),
+                                               list_registered_emails=email_address_dict.get('email_address_list'))
+
+                    return render_template(self.nas_production_html_template,
+                                           cs=self.container_status_dict.get('nas_production'))
                 else:
                     return render_template(self.nas_production_html_template)
 

@@ -127,8 +127,34 @@
             </div>
         </div>
     </div>
+{#    <div class="container">#}
+{#        <div class="col-auto">#}
+    <div class="accordion" id="accordionEmailList">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <h5>List of Registered Emails</h5>
+                </button>
+            </div>
 
-    <div class="card border-warning mt-3 ml-3 mr-3 mb-3">
+            <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordionEmailList">
+                <div class="card-body">
+                    <small class="text-muted">Can search for an email address using the browser "Find". Usually activated using the keyboard shortcut "Ctl+F"</small>
+                    {% if list_registered_emails is defined %}
+                        <ul class="list-group">
+                            {% for email in list_registered_emails %}
+                                <li class="list-group-item">{{ email }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{#        </div>#}
+{#    </div>#}
+
+    <div class="card border-warning m-3">
         <div class="card-body">
             <h5 class="card-title">Known Issues</h5>
             <div class="accordion" id="knownIssuesaccordion">
