@@ -146,6 +146,9 @@
                                 <li class="list-group-item">{{ email }}</li>
                             {% endfor %}
                         </ul>
+                    {% else %}
+                        <div class="alert alert-danger" role="alert">Internal Error: Current list of registered emails couldn't be retrieved please contact SA3 Core
+                            Automation Team</div>
                     {% endif %}
                 </div>
             </div>
