@@ -31,7 +31,7 @@ class DevelopmentConfig(BaseConfig):
 
 
 class QaConfig(BaseConfig):
-    DEBUG = False
+    DEBUG = True
     PORT = 8080 if os.environ.get("PORT") is None else int(os.environ.get('PORT'))
     HOST = os.environ.get('HOST') or '0.0.0.0'
     if os.environ.get('access_token_expiration') is not None:
