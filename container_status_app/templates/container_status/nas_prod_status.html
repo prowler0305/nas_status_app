@@ -37,10 +37,14 @@
                             <ul class="list-group">
                                 {% for application, app_status in cs.applications.items() %}
                                     {% if cs.overall_status == 'NOT ACTIVE' %}
-                                        {%  set app_status  = 'NOT ACTIVE' %}
+                                        {%  set app_status.status  = 'NOT ACTIVE' %}
                                     {% endif %}
-                                    {% if app_status == 'NOT ACTIVE' %}
-                                        <li class="list-group-item">{{application}}</li>
+                                    {% if app_status.status == 'NOT ACTIVE' %}
+                                        <li class="list-group-item">{{application}}
+                                            {% if app_status.additional_info is defined and app_status.additional_info != '' %}
+                                                <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
+                                            {%  endif %}
+                                        </li>
                                     {% endif %}
                                 {% endfor %}
                             </ul>
