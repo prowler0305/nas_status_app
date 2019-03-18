@@ -63,7 +63,7 @@
                             {% if cs.overall_status == 'ACTIVE' %}
                                 <ul class="list-group">
                                     {% for application, app_status in cs.applications.items() %}
-                                        {% if app_status == 'ACTIVE' %}
+                                        {% if app_status.status == 'ACTIVE' %}
                                             <li class="list-group-item">{{application}}</li>
                                         {% endif %}
                                     {% endfor %}
