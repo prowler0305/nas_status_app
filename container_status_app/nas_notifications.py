@@ -46,6 +46,7 @@ class NasNotifications(MethodView):
             email_template_data = email_template_data.replace('{st}', "{} {}".format(request.form.get('outage_start_time'), request.form.get('time_of_day_start')))
             email_template_data = email_template_data.replace('{ed}', request.form.get('outage_end_date'))
             email_template_data = email_template_data.replace('{et}', "{} {}".format(request.form.get('outage_end_time'), request.form.get('time_of_day_end')))
+            email_template_data = email_template_data.replace('{why}', "{}".format(request.form.get('reason_textarea')))
             email_template_fh.seek(0)
             email_template_fh.truncate()
             email_template_fh.write(email_template_data)
