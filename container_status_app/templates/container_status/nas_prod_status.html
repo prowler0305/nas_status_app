@@ -37,7 +37,8 @@
                             <ul class="list-group">
                                 {% for application, app_status in cs.applications.items() %}
                                     {% if cs.overall_status == 'NOT ACTIVE' %}
-                                        {%  set app_status.status  = 'NOT ACTIVE' %}
+                                        {%  set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
+                                        {% set temp = app_status.update({'additional_info': ""}) %}
                                     {% endif %}
                                     {% if app_status.status == 'NOT ACTIVE' %}
                                         <li class="list-group-item">{{application}}
