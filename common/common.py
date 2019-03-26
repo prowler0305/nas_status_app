@@ -191,9 +191,13 @@ class Common(object):
         """
 
         if mode == 'read':
-            with open(file_path) as jsrfh:
-                dict_to_return = json.load(jsrfh)
-                return True, dict_to_return
+            try:
+                with open(file_path) as jsrfh:
+                    dict_to_return = json.load(jsrfh)
+                    return True, dict_to_return
+            except FileNotFoundError:
+                return False, None
+
         elif mode == 'write':
             with open(file_path, mode='w') as jswfh:
                 json.dump(output_dict, jswfh)
