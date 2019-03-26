@@ -2,8 +2,9 @@
 from flask import render_template, redirect, request, url_for
 from flask.views import MethodView
 
-# USCC
+# Container status app specific
 from common.common import Common
+from container_status_app import container_status_app
 
 # Misc
 import json
@@ -43,6 +44,9 @@ class ContainerStatus(MethodView):
                     return render_template(self.nas_production_html_template)
 
             return render_template(self.nas_production_html_template, cs=self.container_status_dict)
+        else:
+            container_status_app.logger.error("File {} could not be read.".format(os.environ.get('container_status_path')))
+            return render_template(self.nas_production_html_template, status_file_err=True)
 
     def post(self):
         """

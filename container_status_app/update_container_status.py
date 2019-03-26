@@ -15,31 +15,32 @@ class UpdateContainer(MethodView):
     def __init__(self):
 
         self.container_status_dict = None
+        self.html_template = 'container_status/update_container_status.html'
 
     def get(self):
         """
 
         :return: Renders the html page with all substituted content needed.
         """
-        if request.cookies.get('access_token_cookie') is None:
-            self.redirect_to_uscc_login()
-            return self.login_redirect_response
+        # if request.cookies.get('access_token_cookie') is None:
+        #     self.redirect_to_uscc_login()
+        #     return self.login_redirect_response
 
         form = ContainerForm()
 
-        return render_template('container_status/update_container_status.html', form=form)
+        return render_template(self.html_template, form=form)
 
     def post(self):
         """
         """
 
-        if 'logout_btn' in request.form:
-            self.delete()
-            return self.login_redirect_response
-
-        if request.cookies.get('access_token_cookie') is None:
-            self.redirect_to_uscc_login()
-            return self.login_redirect_response
+        # if 'logout_btn' in request.form:
+        #     self.delete()
+        #     return self.login_redirect_response
+        #
+        # if request.cookies.get('access_token_cookie') is None:
+        #     self.redirect_to_uscc_login()
+        #     return self.login_redirect_response
 
         form = ContainerForm()
 

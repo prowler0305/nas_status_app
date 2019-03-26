@@ -13,7 +13,7 @@
     <!-- Image and text -->
     <nav class="navbar navbar-dark bg-dark">
         <a class="navbar-brand" href="#">
-            <img src="/static/usc_logo.jpg" width="30" class="d-inline-block align-top" alt="U.S. Cellular Logo">
+            <img src="{{ url_for('static', filename='usc_logo.jpg') }}" width="30" class="d-inline-block align-top" alt="U.S. Cellular Logo">
             NAS Automation Status
         </a>
     </nav>
@@ -22,66 +22,106 @@
             <h1 class="display-4">Generate NAS Platform Notifications</h1>
         </div>
     </div>
-    <div class="card">
-        <h5 class="card-header bg-info">NAS Platform Outage</h5>
-        <div class="card-body">
-            <form method="POST">
-                <h5>Outage Start</h5>
-                <div class="form-row">
-                    <div class="from-group col-auto">
-                        <label for="outageStartDate">Date</label>
-                        <input type="text" class="form-control" name="outage_start_date" id="outageStartDate" placeholder="mm/dd/YYYY" required>
-                    </div>
-                    <div class="form-group col-auto">
-                        <label for="outageStartTime">Time</label>
-                        <input type="text" class="form-control" name="outage_start_time" id="outageStartTime" placeholder="HH:MM" required>
-                    </div>
-                    <div class="form-group col-auto">
-                        <label for="timeOfDayStart">AM/PM</label>
-                        <div class="input-group-append">
-                            <select id="timeOfDayStart" class="form-control" name="time_of_day_start">
-                                <option>Choose...</option>
-                                <option>AM</option>
-                                <option>PM</option>
-                            </select>
-                            <div class="input-group-text">CST</div>
+    <div class="card-deck m-2">
+        <div class="card">
+            <h5 class="card-header bg-info">NAS Platform Outage</h5>
+            <div class="card-body">
+                <p>Use the form below to generate an outage email to all registered users of the NAS Platform Status
+                    application. Submitting this form will also update the overall status for the NAS Platform displayed
+                    on the <a href="{{ url_for('container_status') }}">NAS Automation Status UI</a>.
+                </p>
+                <form method="POST">
+                    <h5>Outage Start</h5>
+                    <div class="form-row">
+                        <div class="from-group col-auto">
+                            <label for="outageStartDate">Date</label>
+                            <input type="text" class="form-control" name="outage_start_date" id="outageStartDate" placeholder="mm/dd/YYYY" required>
                         </div>
-                        {% if tods_error is defined and tods_error is sameas True %}
-                            <div class="alert alert-danger" role="alert">AM/PM not selected.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <h5>Outage End</h5>
-                <div class="form-row">
-                    <div class="form-group col-auto">
-                        <label for="outageEndDate">Date</label>
-                        <input type="text" class="form-control" name="outage_end_date" id="outageEndDate" placeholder="mm/dd/YYYY" required>
-                    </div>
-                    <div class="form-group col-auto">
-                        <label for="outageEndTime">Time</label>
-                        <input type="text" class="form-control" name="outage_end_time" id="outageEndTime" placeholder="HH:MM" required>
-                    </div>
-                    <div class="form-group col-auto">
-                        <label for="timeOfDayEnd">AM/PM</label>
-                        <div class="input-group-append">
-                            <select id="timeOfDayEnd" class="form-control" name="time_of_day_end">
-                                <option>Choose...</option>
-                                <option>AM</option>
-                                <option>PM</option>
-                            </select>
-                            <div class="input-group-text">CST</div>
+                        <div class="form-group col-auto">
+                            <label for="outageStartTime">Time</label>
+                            <input type="text" class="form-control" name="outage_start_time" id="outageStartTime" placeholder="HH:MM" required>
                         </div>
-                        {% if tode_error is defined and tode_error is sameas True %}
-                            <div class="alert alert-danger" role="alert">AM/PM not selected.</div>
-                        {% endif %}
+                        <div class="form-group col-auto">
+                            <label for="timeOfDayStart">AM/PM</label>
+                            <div class="input-group-append">
+                                <select id="timeOfDayStart" class="form-control" name="time_of_day_start">
+                                    <option>Choose...</option>
+                                    <option>AM</option>
+                                    <option>PM</option>
+                                </select>
+                                <div class="input-group-text">CST</div>
+                            </div>
+                            {% if tods_error is defined and tods_error is sameas True %}
+                                <div class="alert alert-danger" role="alert">AM/PM not selected.</div>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
-                <div class="form-group col-auto">
-                    <label for="whyOutage">Reason(optional)</label>
-                    <textarea class="form-control" name="reason_textarea" id="whyOutage" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary mt-2">Submit</button>
-            </form>
+                    <h5>Outage End</h5>
+                    <div class="form-row">
+                        <div class="form-group col-auto">
+                            <label for="outageEndDate">Date</label>
+                            <input type="text" class="form-control" name="outage_end_date" id="outageEndDate" placeholder="mm/dd/YYYY" required>
+                        </div>
+                        <div class="form-group col-auto">
+                            <label for="outageEndTime">Time</label>
+                            <input type="text" class="form-control" name="outage_end_time" id="outageEndTime" placeholder="HH:MM" required>
+                        </div>
+                        <div class="form-group col-auto">
+                            <label for="timeOfDayEnd">AM/PM</label>
+                            <div class="input-group-append">
+                                <select id="timeOfDayEnd" class="form-control" name="time_of_day_end">
+                                    <option>Choose...</option>
+                                    <option>AM</option>
+                                    <option>PM</option>
+                                </select>
+                                <div class="input-group-text">CST</div>
+                            </div>
+                            {% if tode_error is defined and tode_error is sameas True %}
+                                <div class="alert alert-danger" role="alert">AM/PM not selected.</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group col-auto">
+                        <label for="whyOutage">Reason(optional)</label>
+                        <textarea class="form-control" name="reason_textarea" id="whyOutage" rows="3"></textarea>
+                    </div>
+                    {% if status_file_update_err is defined %}
+                        <div class="alert alert-danger" role="alert">
+                            File {{ status_file_update_err }} could not be updated. NAS Platform Status App data needs to be
+                            updated manually.
+                        </div>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <h5 class="card-header bg-info">Change NAS Platform Status</h5>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <p>Use the toggle switch below to change the display of the Overall Status of the NAS Platform
+                        web application.</p>
+                        <h5>Current Status: {{ nas_overall_status }}</h5>
+                        <div class="custom-control custom-switch">
+                            {% if nas_overall_status is defined and nas_overall_status == 'ACTIVE' %}
+                                {% set disabled_yes = 'disabled' %}
+                                {% set check_it = 'checked' %}
+                            {% endif %}
+                            <input type="checkbox" class="custom-control-input" name="status_switch" id="nasStatusSwitch" {{ check_it }} {{ disabled_yes }} autocomplete="off">
+                            <label class="custom-control-label font-weight-bold" for="nasStatusSwitch">NAS Production Status</label>
+                        </div>
+                        <div class="alert alert-warning" role="alert">
+                            <p>You can only change the status from <span class="font-weight-bold">NOT ACTIVE</span> to
+                                <span class="font-weight-bold">ACTIVE</span>. If you need to set the status to
+                                <span class="font-weight-bold">NOT ACTIVE</span> then use the NAS Platform Outage form
+                                to the right.
+                            </p>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
     <!-- Optional JavaScript -->

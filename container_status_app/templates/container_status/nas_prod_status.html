@@ -13,202 +13,204 @@
     <!-- Image and text -->
     <nav class="navbar navbar-dark bg-dark">
         <a class="navbar-brand" href="#">
-            <img src={{ url_for('static', filename='usc_logo.jpg') }} width="30" class="d-inline-block align-top" alt="U.S. Cellular Logo">
-            NAS Automation Status
+            <img src="{{ url_for('static', filename='usc_logo.jpg') }}" width="30" class="d-inline-block align-top" alt="U.S. Cellular Logo">
+            NAS Platform Status
         </a>
     </nav>
-    <div class="jumbotron jumbotron-fluid">
-        <div class="container">
-            {% if cs.overall_status == "ACTIVE" %}
-                <h1 class="display-4">{{cs.display_name}}<span class="badge badge-success">{{cs.overall_status}}</span></h1>
-            {% else %}
-                <h1 class="display-4">{{cs.display_name}}<span class="badge badge-danger">{{cs.overall_status}}</span></h1>
-            {% endif %}
-
+    {% if status_file_err is defined and status_file_err is sameas True %}
+        <div class="alert alert-danger" role="alert">
+            Internal Server Error. Please report this issue to the SA3 Core Automation Team.
         </div>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="card-deck">
-{#                {% if cs.overall_status == "NOT ACTIVE" %}#}
-                    <div class="card">
-                        <h5 class="card-header bg-danger text-white">Not Available</h5>
-                        <div class="card-body">
-                            <ul class="list-group">
-                                {% for application, app_status in cs.applications.items() %}
-                                    {% if cs.overall_status == 'NOT ACTIVE' %}
-                                        {%  set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
-                                        {% set temp = app_status.update({'additional_info': ""}) %}
+    {% else %}
+        {% if cs is defined %}
+            <div class="jumbotron jumbotron-fluid">
+                <div class="container">
+                    {% if cs.overall_status == "ACTIVE" %}
+                        <h1 class="display-4">{{cs.display_name}}<span class="badge badge-success">{{cs.overall_status}}</span></h1>
+                    {% else %}
+                        <h1 class="display-4">{{cs.display_name}}<span class="badge badge-danger">{{cs.overall_status}}</span></h1>
+                    {% endif %}
+
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="card-deck">
+                            <div class="card">
+                                <h5 class="card-header bg-danger text-white">Not Available</h5>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        {% for application, app_status in cs.applications.items() %}
+                                            {% if cs.overall_status == 'NOT ACTIVE' %}
+                                                {% set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
+                                                {% set temp = app_status.update({'additional_info': ""}) %}
+                                            {% endif %}
+                                            {% if app_status.status == 'NOT ACTIVE' %}
+                                                <li class="list-group-item">{{application}}
+                                                    {% if app_status.additional_info is defined and app_status.additional_info != '' %}
+                                                        <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
+                                                    {%  endif %}
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                    {% if cs.overall_status == 'NOT ACTIVE'  %}
+                                        <div class="alert alert-info" role="alert">
+                                            <p class="lead">Expected to be restored by:</p>
+                                            <p class="lead">{{cs.restored_by}}</p>
+                                        </div>
                                     {% endif %}
-                                    {% if app_status.status == 'NOT ACTIVE' %}
-                                        <li class="list-group-item">{{application}}
-                                            {% if app_status.additional_info is defined and app_status.additional_info != '' %}
-                                                <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
-                                            {%  endif %}
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                            {% if cs.overall_status == 'NOT ACTIVE'  %}
-                                <div class="alert alert-info" role="alert">
-                                    <p class="lead">Expected to be restored by:</p>
-                                    <p class="lead">{{cs.restored_by}}</p>
                                 </div>
-                            {% endif %}
+                            </div>
+                            <div class="card">
+                                <h5 class="card-header bg-success text-white">Available</h5>
+                                <div class="card-body">
+                                    {% if cs.overall_status == 'ACTIVE' %}
+                                        <ul class="list-group">
+                                            {% for application, app_status in cs.applications.items() %}
+                                                {% if app_status.status == 'ACTIVE' %}
+                                                    <li class="list-group-item">{{application}}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        <div class="card">
+                            <h5 class="card-header bg-secondary text-white">Contact Us</h5>
+                            <div class="card-body">
+                                <p>For questions, click the link to generate an email to the <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Core Automation Engineering team.</a></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h5 class="card-header bg-secondary text-white">User Guides</h5>
+                            <div class="card-body">
+                                <ul class="list-group">
+                                    <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/Deloitte/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-primary">
+                                        VLAN and AGG Router Health Check
+                                    </a>
+                                    <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/EtherSAMDrop34/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-danger">
+                                        EtherSAM
+                                    </a>
+                                    <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/SeGW/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-warning">
+                                        Security Gateway Health Check
+                                    </a>
+                                <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/PAM_Reset/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-success">
+                                        PAM Reset
+                                    </a>
+                                <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/EBAAuto/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-dark">
+                                        EBA
+                                    </a>
+                                </ul>
+
+                                    <p class="card-text">
+                                        <small class="text-muted">If presented with the message "Sorry, this site hasn't been shared with you." after clicking a link please reach out to the project owner to have them add you.</small>
+                                    </p>
+
+                            </div>
                         </div>
                     </div>
-{#                {% else %}#}
-                    <div class="card">
-                        <h5 class="card-header bg-success text-white">Available</h5>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <h5 class="card-header bg-info">Notifications</h5>
+                            <div class="card-body">
+                                <form method="POST">
+                                    <div class="form-group">
+                                        <label for="emailFormControl">Enter an Email address to receive notifications related to the NAS Platform and its applications.</label>
+                                        <input type="email" class="form-control" id="emailFormControl" placeholder="name@example.com" name="email_addr" required>
+                                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                                    </div>
+                                </form>
+                                {% if email_registered is defined %}
+                                    {% if email_registered is sameas True %}
+                                        <div class="alert alert-success" role="alert">Email Registered Successfully</div>
+                                    {% else %}
+                                        <div class="alert alert-danger" role="alert">Error Registering Email. Please contact SA3 Core Automation Team.</div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {#    <div class="container">#}
+        {#        <div class="col-auto">#}
+            <div class="accordion" id="accordionEmailList">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <h5>List of Registered Emails</h5>
+                        </button>
+                    </div>
+
+                    <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordionEmailList">
                         <div class="card-body">
-                            {% if cs.overall_status == 'ACTIVE' %}
+                            <small class="text-muted">Can search for an email address using the browser "Find". Usually activated using the keyboard shortcut "Ctl+F"</small>
+                            {% if list_registered_emails is defined %}
                                 <ul class="list-group">
-                                    {% for application, app_status in cs.applications.items() %}
-                                        {% if app_status.status == 'ACTIVE' %}
-                                            <li class="list-group-item">{{application}}</li>
-                                        {% endif %}
+                                    {% for email in list_registered_emails %}
+                                        <li class="list-group-item">{{ email }}</li>
                                     {% endfor %}
                                 </ul>
-                            {% endif %}
-                        </div>
-                    </div>
-{#                {% endif %}#}
-                <div class="card">
-                    <h5 class="card-header bg-secondary text-white">Contact Us</h5>
-                    <div class="card-body">
-                        <p>For questions, click the link to generate an email to the <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Core Automation Engineering team.</a></p>
-                    </div>
-                </div>
-                <div class="card">
-                    <h5 class="card-header bg-secondary text-white">User Guides</h5>
-                    <div class="card-body">
-                        <ul class="list-group">
-                            <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/Deloitte/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-primary">
-                                VLAN and AGG Router Health Check
-                            </a>
-                            <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/EtherSAMDrop34/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-danger">
-                                EtherSAM
-                            </a>
-                            <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/SeGW/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-warning">
-                                Security Gateway Health Check
-                            </a>
-                        <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/PAM_Reset/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-success">
-                                PAM Reset
-                            </a>
-                        <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/EBAAuto/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-dark">
-                                EBA
-                            </a>
-                        </ul>
-
-                            <p class="card-text">
-                                <small class="text-muted">If presented with the message "Sorry, this site hasn't been shared with you." after clicking a link please reach out to the project owner to have them add you.</small>
-                            </p>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <h5 class="card-header bg-info">Notifications</h5>
-                    <div class="card-body">
-                        <form method="POST">
-                            <div class="form-group">
-                                <label for="emailFormControl">Enter an Email address to receive notifications related to the NAS Platform and its applications.</label>
-                                <input type="email" class="form-control" id="emailFormControl" placeholder="name@example.com" name="email_addr" required>
-                                <button type="submit" class="btn btn-primary mt-2">Submit</button>
-                            </div>
-                        </form>
-                        {% if email_registered is defined %}
-                            {% if email_registered is sameas True %}
-                                <div class="alert alert-success" role="alert">Email Registered Successfully</div>
                             {% else %}
-                                <div class="alert alert-danger" role="alert">Error Registering Email. Please contact SA3 Core Automation Team.</div>
+                                <div class="alert alert-danger" role="alert">Internal Error: Current list of registered emails couldn't be retrieved please contact SA3 Core
+                                    Automation Team</div>
                             {% endif %}
-                        {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-{#    <div class="container">#}
-{#        <div class="col-auto">#}
-    <div class="accordion" id="accordionEmailList">
-        <div class="card">
-            <div class="card-header" id="headingOne">
-                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    <h5>List of Registered Emails</h5>
-                </button>
-            </div>
+        {#        </div>#}
+        {#    </div>#}
 
-            <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordionEmailList">
+            <div class="card border-warning m-3">
                 <div class="card-body">
-                    <small class="text-muted">Can search for an email address using the browser "Find". Usually activated using the keyboard shortcut "Ctl+F"</small>
-                    {% if list_registered_emails is defined %}
-                        <ul class="list-group">
-                            {% for email in list_registered_emails %}
-                                <li class="list-group-item">{{ email }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <div class="alert alert-danger" role="alert">Internal Error: Current list of registered emails couldn't be retrieved please contact SA3 Core
-                            Automation Team</div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-{#        </div>#}
-{#    </div>#}
-
-    <div class="card border-warning m-3">
-        <div class="card-body">
-            <h5 class="card-title">Known Issues</h5>
-            <div class="accordion" id="knownIssuesaccordion">
-                <div class="card">
-                    <div class="card-header bg-warning" id="ethersamUIWorkaroundHeading">
-                        <button class="btn btn-link btn-block text-dark text-left" type="button" data-toggle="collapse" data-target="#ethersamUI" aria-expanded="false" aria-controls="ethersamUI">
-                            Ethersam UI long response time on test progress
-                        </button>
-                    </div>
-                    <div id="ethersamUI" class="collapse hide" aria-labelledby="ethersamUIWorkaroundHeading" data-parent="#knownIssuesaccordion">
-                        <div class="card-body">
-                            <p>We have found a minor issue with the EtherSAM Nokia Single Site automation. While running the EtherSAM automation a user may experience what appears to be a long response time or lack of updates on the automation progress (while it appears automation has stalled, in fact the automation is continuing to run).</p>
-                            To work around this issue:
-                            <ul class="list-group">
-                                <li class="list-group-item list-group-item-secondary">1)	Open a new browser session</li>
-                                <li class="list-group-item list-group-item-secondary">2)	Type in your Site ID</li>
-                                <li class="list-group-item list-group-item-secondary">3)	Select the log history</li>
-                                <li class="list-group-item list-group-item-secondary">4)	Select start and end date</li>
-                                <li class="list-group-item list-group-item-secondary">5)	Select show log</li>
-                                <li class="list-group-item list-group-item-secondary">6)	Select “view test results” for the top entry in the list (if there is more than one test result available)</li>
-                                <li class="list-group-item list-group-item-secondary">7)	Tail the active log by periodically doing a browser refresh</li>
-                            </ul>
-                            This will be fixed in the next release of the NAS Platform.
+                    <h5 class="card-title">Known Issues</h5>
+                    <div class="accordion" id="knownIssuesaccordion">
+                        <div class="card">
+                            <div class="card-header bg-warning" id="ethersamUIWorkaroundHeading">
+                                <button class="btn btn-link btn-block text-dark text-left" type="button" data-toggle="collapse" data-target="#ethersamUI" aria-expanded="false" aria-controls="ethersamUI">
+                                    Ethersam UI long response time on test progress
+                                </button>
+                            </div>
+                            <div id="ethersamUI" class="collapse hide" aria-labelledby="ethersamUIWorkaroundHeading" data-parent="#knownIssuesaccordion">
+                                <div class="card-body">
+                                    <p>We have found a minor issue with the EtherSAM Nokia Single Site automation. While running the EtherSAM automation a user may experience what appears to be a long response time or lack of updates on the automation progress (while it appears automation has stalled, in fact the automation is continuing to run).</p>
+                                    To work around this issue:
+                                    <ul class="list-group">
+                                        <li class="list-group-item list-group-item-secondary">1)	Open a new browser session</li>
+                                        <li class="list-group-item list-group-item-secondary">2)	Type in your Site ID</li>
+                                        <li class="list-group-item list-group-item-secondary">3)	Select the log history</li>
+                                        <li class="list-group-item list-group-item-secondary">4)	Select start and end date</li>
+                                        <li class="list-group-item list-group-item-secondary">5)	Select show log</li>
+                                        <li class="list-group-item list-group-item-secondary">6)	Select “view test results” for the top entry in the list (if there is more than one test result available)</li>
+                                        <li class="list-group-item list-group-item-secondary">7)	Tail the active log by periodically doing a browser refresh</li>
+                                    </ul>
+                                    This will be fixed in the next release of the NAS Platform.
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header bg-danger" id="ethersamExfoResultErrorHeading">
-                        <button class="btn btn-link btn-block text-left text-white" type="button" data-toggle="collapse" data-target="#ethersamexfo" aria-expanded="false" aria-controls="ethersam423">
-                            Ethersam Status 423 Error
-                        </button>
-                    </div>
-                    <div id="ethersamexfo" class="collapse hide" aria-labelledby="ethersamExfoResultErrorHeading" data-parent="#knownIssuesaccordion">
-                        <div class="card-body">
-                            <p> There is a problem retrieving the test results during the <strong>Test Execution</strong> of an Ethersam Site Test in our Exfo system.
-{#                            <p>If you see a message like the below screen-shot, your selected test has successfully executed in Exfo and the results are recorded there.#}
-{#                            Please log into the Exfo Web application and find your results there. The Ethersam application will continue on with the rest of the workflow#}
-{#                            steps.</p>#}
-                            <p>We apologize for this inconvenience and are working to restore the ability to retrieve test results in the Ethersam application directly.</p>
-                            <img src={{ url_for('static', filename='ethersam_exfo_results_error.png') }} class="img-fluid" alt="Ethersam Exfo Results Error">
-                        </div>
+    {#                    <div class="card">#}
+    {#                        <div class="card-header bg-danger" id="ethersamExfoResultErrorHeading">#}
+    {#                            <button class="btn btn-link btn-block text-left text-white" type="button" data-toggle="collapse" data-target="#ethersamexfo" aria-expanded="false" aria-controls="ethersam423">#}
+    {#                                Ethersam Status 423 Error#}
+    {#                            </button>#}
+    {#                        </div>#}
+    {#                        <div id="ethersamexfo" class="collapse hide" aria-labelledby="ethersamExfoResultErrorHeading" data-parent="#knownIssuesaccordion">#}
+    {#                            <div class="card-body">#}
+    {#                                <p> There is a problem retrieving the test results during the <strong>Test Execution</strong> of an Ethersam Site Test in our Exfo system.#}
+    {#                                <p>We apologize for this inconvenience and are working to restore the ability to retrieve test results in the Ethersam application directly.</p>#}
+    {#                                <img src={{ url_for('static', filename='ethersam_exfo_results_error.png') }} class="img-fluid" alt="Ethersam Exfo Results Error">#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                    </div>#}
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        {% endif %}
+    {% endif %}
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
