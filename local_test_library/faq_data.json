@@ -1,0 +1,22 @@
+{
+  "general": {
+    "title1": "This is a first FAQ",
+    "title2": "This is a second FAQ"
+  },
+  "mvlan": {
+    "title1": "FAQ for Mvlan",
+    "title2": "FAQ for MVlan"
+  },
+  "healthcheck": {
+    "title1": "FAQ for HC",
+    "title2": "FAQ for HC"
+  },
+  "ethersam": {
+    "title1": "FAQ for Ethersam",
+    "title2": "FAQ for Ethersam"
+  },
+  "b2b": {
+    "title1": "FAQ for B2B",
+    "title2": "FAQ for B2B"
+  }
+}

@@ -27,19 +27,23 @@ class ContainerStatus(MethodView):
 
         :return: Renders the html page with all substituted content needed.
         """
-
+        if os.environ.get('container_status_path') is None and os.environ.get('container_status_path') == '':
+            container_status_app.logger.error("Environment variable 'container_status_path' not defined.")
+            return render_template(self.nas_production_html_template, status_file_err=True)
         read_json_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
         if read_json_rc:
             if request.url_rule.rule == '/nas_status':
                 if 'nas_production' in self.container_status_dict:
-                    read_email_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
-                    if read_email_rc and type(self.notify_email_dict) is dict:
+                    if os.environ.get('notify_emails_path') is not None and os.environ.get('notify_emails_path') != '':
+                        read_email_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
+                        if read_email_rc and type(self.notify_email_dict) is dict:
+                            return render_template(self.nas_production_html_template,
+                                                   cs=self.container_status_dict.get('nas_production'),
+                                                   list_registered_emails=self.notify_email_dict.get('email_address_list'))
+                    else:
+                        container_status_app.logger.error("Environment variable 'notify_emails_path' not defined")
                         return render_template(self.nas_production_html_template,
-                                               cs=self.container_status_dict.get('nas_production'),
-                                               list_registered_emails=self.notify_email_dict.get('email_address_list'))
-
-                    return render_template(self.nas_production_html_template,
-                                           cs=self.container_status_dict.get('nas_production'))
+                                               cs=self.container_status_dict.get('nas_production'))
                 else:
                     return render_template(self.nas_production_html_template)
 

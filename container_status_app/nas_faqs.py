@@ -15,6 +15,7 @@ class NasFaqs(MethodView):
     def __init__(self):
 
         self.nas_faq_html_template = 'container_status/nas_faqs.html'
+        self.faq_dict = None
 
     def get(self):
         """
@@ -22,7 +23,14 @@ class NasFaqs(MethodView):
         :return: Renders the html page with all substituted content needed.
         """
 
-        return render_template(self.nas_faq_html_template)
+        if os.environ.get('faq_data_path') is None or os.environ.get('faq_data_path') == '':
+            container_status_app.logger.error("Environment variable 'faq_data_path' not defined.")
+            return render_template(self.nas_faq_html_template, faq_file_err=True)
+        read_json_rc, self.faq_dict = Common.rw_json_file(file_path=os.environ.get('faq_data_path'))
+        if read_json_rc:
+            return render_template(self.nas_faq_html_template, faq_dict=self.faq_dict)
+
+        return render_template(self.nas_faq_html_template, faq_file_err=True)
 
     def post(self):
         """
