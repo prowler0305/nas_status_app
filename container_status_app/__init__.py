@@ -8,14 +8,17 @@ api = Api(container_status_app, prefix='/v1')
 from container_status_app.container_status import ContainerStatus
 from container_status_app.update_container_status import UpdateContainer
 from container_status_app.nas_notifications import NasNotifications
+from container_status_app.nas_faqs import NasFaqs
 
 
 container_status_view = ContainerStatus.as_view(name='container_status')
-update_container_view = UpdateContainer.as_view(name='update_container')
+# update_container_view = UpdateContainer.as_view(name='update_container')
 generate_nas_notifications = NasNotifications.as_view(name='nas_notifications')
+faqs = NasFaqs.as_view(name='nas_faqs')
 
 # container_status_app.add_url_rule('/cstatus', view_func=container_status_view, methods=['GET'])
 container_status_app.add_url_rule('/nas_status', view_func=container_status_view, methods=['GET', 'POST'])
 container_status_app.add_url_rule('/nas_notify', view_func=generate_nas_notifications, methods=['GET', 'POST'])
+container_status_app.add_url_rule('/nas_faqs', view_func=faqs, methods={'GET', 'POST'})
 # container_status_app.add_url_rule('/cstatus_update', view_func=update_container_view, methods=['GET', 'POST'])
 
