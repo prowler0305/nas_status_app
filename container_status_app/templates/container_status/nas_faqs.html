@@ -14,38 +14,40 @@
     <nav class="navbar navbar-dark bg-dark">
         <a class="navbar-brand" href="#">
             <img src="{{ url_for('static', filename='usc_logo.jpg') }}" width="30" class="d-inline-block align-top" alt="U.S. Cellular Logo">
-            NAS Automation FAQs
+            NAS FAQs
         </a>
     </nav>
     {% if faq_file_err is defined %}
         <div class="alert alert-danger" role="alert">
             Internal Server error. Please report this issue to the SA3 Core Automation Team.
         </div>
-    {% endif %}
-    {% for faq_type_key, faq_dicts in faq_dict.items() %}
-        <div class="accordion" id="{{ faq_type_key }}FAQaccordion">
-            <div class="card">
-                <div class="card-header bg-info" id="{{ faq_type_key }}FAQheading">
-                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#{{ faq_type_key }}FAQ" aria-expanded="false" aria-controls="{{ faq_type_key }}FAQ">
-                        <span style="font-size:larger;">{{ faq_type_key.upper() }}</span>
-                    </button>
-                    <small class="text-muted">Click to expand</small>
-                </div>
-                {% for faq_title, faq_content in faq_dicts.items() %}
-                    <div id="{{ faq_type_key }}FAQ" class="collapse" aria-labelledby="{{ faq_type_key }}FAQheading" data-parent="#{{ faq_type_key }}FAQaccordion">
-                        <div class="card-body">
-                            <div class="card">
-                                <div class="card-header bg-light">{{ faq_title }}</div>
-                            </div>
+    {% else %}
+        {% for faq_type_key, faq_dicts in faq_dict.items() %}
+            <div class="accordion" id="{{ faq_type_key }}FAQaccordion">
+                <div class="card">
+                    <div class="card-header bg-info" id="{{ faq_type_key }}FAQheading">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#{{ faq_type_key }}FAQ" aria-expanded="false" aria-controls="{{ faq_type_key }}FAQ">
+                            <span style="font-size:larger;">{{ faq_type_key.upper() }}</span>
+                        </button>
+                        <small class="text-muted">Click to expand</small>
+                    </div>
+                    {% for faq_title, faq_content in faq_dicts.items() %}
+                        <div id="{{ faq_type_key }}FAQ" class="collapse" aria-labelledby="{{ faq_type_key }}FAQheading" data-parent="#{{ faq_type_key }}FAQaccordion">
                             <div class="card-body">
-                                {{ faq_content }}
+                                <div class="card">
+                                    <div class="card-header bg-light">{{ faq_title }}</div>
+                                </div>
+                                <div class="card-body">
+                                    {{ faq_content }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    {% endif %}
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 

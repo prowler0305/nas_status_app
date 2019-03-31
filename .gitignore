@@ -35,6 +35,7 @@ cmake-build-debug/
 # IntelliJ
 out/
 .idea/
+*.iml
 #local_test_library
 
 # mpeltonen/sbt-idea plugin

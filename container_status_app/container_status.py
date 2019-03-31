@@ -27,7 +27,7 @@ class ContainerStatus(MethodView):
 
         :return: Renders the html page with all substituted content needed.
         """
-        if os.environ.get('container_status_path') is None and os.environ.get('container_status_path') == '':
+        if os.environ.get('container_status_path') is None or os.environ.get('container_status_path') == '':
             container_status_app.logger.error("Environment variable 'container_status_path' not defined.")
             return render_template(self.nas_production_html_template, status_file_err=True)
         read_json_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
