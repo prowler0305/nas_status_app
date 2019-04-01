@@ -22,52 +22,91 @@
             Internal Server error. Please report this issue to the SA3 Core Automation Team.
         </div>
     {% else %}
-        <div class="card-deck m-2">
-            <div class="card">
-                <h5 class="card-header bg-success">Add FAQ</h5>
-                <div class="card-body">
-                    <form method="POST" autocomplete="off">
-                        {% for faq_type in faq_dict.keys() %}
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="faq_type_radio" id="{{ faq_type }}Radio" value="{{ faq_type }}" required>
-                                <label class="form-check-label" for="{{ faq_type }}Radio">{{ faq_type.upper() }}</label>
-                            </div>
-                        {% endfor %}
-                        <div class="form-group">
-                            <label for="faqQuestion">Question</label>
-                            <input type="text" class="form-control" id="faqQuestion" name="faq_question">
+        <div class="card m-2">
+            <h5 class="card-header bg-success">Add FAQ</h5>
+            <div class="card-body">
+                <form method="POST" autocomplete="off">
+                    {% for faq_type in faq_dict.keys() %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="faq_type_radio" id="{{ faq_type }}Radio" value="{{ faq_type }}" required>
+                            <label class="form-check-label" for="{{ faq_type }}Radio">{{ faq_type.upper() }}</label>
                         </div>
-                        <div class="form-group">
-                            <label for="faqContent">Answer</label>
-                            <textarea class="form-control" name="faq_content" id="faqContent" rows="10"></textarea>
+                    {% endfor %}
+                    <div class="form-group">
+                        <label for="faqQuestion">Question</label>
+                        <input type="text" class="form-control" id="faqQuestion" name="faq_question">
+                    </div>
+                    <div class="form-group">
+                        <label for="faqContent">Answer</label>
+                        <textarea class="form-control" name="faq_content" id="faqContent" rows="10"></textarea>
+                    </div>
+                    <button type="submit" name="addFAQButton" class="btn btn-outline-success mt-2">Add</button>
+                </form>
+                {% if faq_added_rc is defined %}
+                    {%if faq_added_rc is sameas True %}
+                        <div class="alert alert-success" role="alert">
+                            FAQ successfully added
                         </div>
-                        {% if status_file_update_err is defined %}
-                            <div class="alert alert-danger" role="alert">
-                                File {{ status_file_update_err }} could not be updated. NAS Platform Status App data needs to be
-                                updated manually.
-                            </div>
-                        {% endif %}
-                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
-                    </form>
-                    {% if faq_added_rc is defined %}
-                        {%if faq_added_rc is sameas True %}
-                            <div class="alert alert-success" role="alert">
-                                FAQ successfully added
-                            </div>
-                        {% else  %}
-                            <div class="alert alert-danger" role="alert">
-                                Error adding FAQ due to data file could not be read or written to. Please contact SA3 Core
-                                Automation Team
-                            </div>
-                        {% endif %}
+                    {% else  %}
+                        <div class="alert alert-danger" role="alert">
+                            Error adding FAQ due to data file could not be read or written to. Please contact SA3 Core
+                            Automation Team
+                        </div>
                     {% endif %}
-                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card m-2">
+            <h5 class="card-header bg-dark text-white">Delete FAQ</h5>
+            <div class="card-body">
+                <form method="POST" autocomplete="off">
+                    {% for faq_type_key, faq_dicts in faq_dict.items() %}
+                        <div class="accordion" id="{{ faq_type_key }}FAQaccordion">
+                            <div class="card">
+                                <div class="card-header bg-info" id="{{ faq_type_key }}FAQheading">
+                                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#{{ faq_type_key }}FAQ" aria-expanded="false" aria-controls="{{ faq_type_key }}FAQ">
+                                        <span class="text-white" style="font-size:larger;">{{ faq_type_key.upper() }}</span>
+                                    </button>
+                                    <small class="text-white">Click to expand</small>
+                                </div>
+                                <div id="{{ faq_type_key }}FAQ" class="collapse" aria-labelledby="{{ faq_type_key }}FAQheading" data-parent="#{{ faq_type_key }}FAQaccordion">
+                                    <div class="card-body">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                {% for faq_title in faq_dicts.keys() %}
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                               name="{{ faq_type_key }}:{{ faq_title }}" value="{{ faq_title }}" id="{{ faq_title }}Checkbox">
+                                                        <label class="form-check-label" for="{{ faq_title }}Checkbox">{{ faq_title }}</label>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" name="deleteFAQButton" class="btn btn-outline-dark mt-2">Delete</button>
+                </form>
+                {% if faq_delete_rc is defined %}
+                    {%if faq_delete_rc is sameas True %}
+                        <div class="alert alert-success" role="alert">
+                            FAQ successfully deleted
+                        </div>
+                    {% else  %}
+                        <div class="alert alert-danger" role="alert">
+                            Some or all FAQ selected could not be deleted due to FAQ could not be located in the file or
+                            the file could not be written to. Please contact SA3 Core Automation Team
+                        </div>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     {% endif %}
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="../../static/bootstrap.min.js"></script>
