@@ -29,12 +29,14 @@ class NasFaqs(MethodView):
             return render_template(self.nas_faq_html_template, faq_file_err=True)
         read_json_rc, self.faq_dict = Common.rw_json_file(file_path=os.environ.get('faq_data_path'))
         if read_json_rc:
+            # for faq_category, faq_dicts in self.faq_dict.items():
+            #     for faq_question, faq_content in faq_dicts.items():
+            #         if type(faq_content) is list:
+            #             joined_multiline_content = ""
+            #             for content_string in faq_content:
+            #                 joined_multiline_content = joined_multiline_content + content_string + "\r\n"
+            #             faq_dicts[faq_question] = joined_multiline_content.replace("\r\n", "<br\>")
+            #         self.faq_dict[faq_category] = faq_dicts
             return render_template(self.nas_faq_html_template, faq_dict=self.faq_dict)
 
         return render_template(self.nas_faq_html_template, faq_file_err=True)
-
-    def post(self):
-        """
-        Receives control when the Submit button is clicked in the Notifications Card to register an email address.
-        :return: Re-renders the page with the message of whether the email address was registered successfully or not.
-        """

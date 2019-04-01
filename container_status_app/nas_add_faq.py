@@ -43,7 +43,11 @@ class NasAddFaq(MethodView):
         read_json_rc, self.faq_dict = Common.rw_json_file(file_path=os.environ.get('faq_data_path'))
         if read_json_rc:
             faq_category_dicts = self.faq_dict.get(request.form.get('faq_type_radio'))
-            faq_category_dicts[request.form.get('faq_question')] = request.form.get('faq_content')
+            if "\r\n" in request.form.get('faq_content'):
+                faq_content_data = request.form.get('faq_content').split("\r\n")
+            else:
+                faq_content_data = request.form.get('faq_content')
+            faq_category_dicts[request.form.get('faq_question')] = faq_content_data
             self.faq_dict[request.form.get('faq_type_radio')] = faq_category_dicts
             update_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('faq_data_path'),
                                                                mode='write',
