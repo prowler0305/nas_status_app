@@ -9,13 +9,14 @@ from container_status_app import container_status_app
 # Misc
 import json
 import os
+from collections import OrderedDict
 
 
 class NasFaqs(MethodView):
     def __init__(self):
 
         self.nas_faq_html_template = 'container_status/nas_faqs.html'
-        self.faq_dict = None
+        self.faq_dict = OrderedDict()
 
     def get(self):
         """

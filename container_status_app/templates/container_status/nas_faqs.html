@@ -27,9 +27,9 @@
                 <div class="card">
                     <div class="card-header bg-info" id="{{ faq_type_key }}FAQheading">
                         <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#{{ faq_type_key }}FAQ" aria-expanded="false" aria-controls="{{ faq_type_key }}FAQ">
-                            <span style="font-size:larger;">{{ faq_type_key.upper() }}</span>
+                            <span class="text-white" style="font-size:larger;">{{ faq_type_key.upper() }}</span>
                         </button>
-                        <small class="text-muted">Click to expand</small>
+                        <small class="text-white">Click to expand</small>
                     </div>
                     {% for faq_title, faq_content in faq_dicts.items() %}
                         <div id="{{ faq_type_key }}FAQ" class="collapse" aria-labelledby="{{ faq_type_key }}FAQheading" data-parent="#{{ faq_type_key }}FAQaccordion">
