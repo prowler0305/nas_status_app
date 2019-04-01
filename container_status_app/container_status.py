@@ -40,6 +40,9 @@ class ContainerStatus(MethodView):
                             return render_template(self.nas_production_html_template,
                                                    cs=self.container_status_dict.get('nas_production'),
                                                    list_registered_emails=self.notify_email_dict.get('email_address_list'))
+                        else:
+                            return render_template(self.nas_production_html_template,
+                                                   cs=self.container_status_dict.get('nas_production'))
                     else:
                         container_status_app.logger.error("Environment variable 'notify_emails_path' not defined")
                         return render_template(self.nas_production_html_template,
