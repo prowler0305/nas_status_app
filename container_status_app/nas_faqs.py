@@ -28,7 +28,7 @@ class NasFaqs(MethodView):
             container_status_app.logger.error("Environment variable 'faq_data_path' not defined.")
             return render_template(self.nas_faq_html_template, faq_file_err=True)
         read_json_rc, self.faq_dict = Common.rw_json_file(file_path=os.environ.get('faq_data_path'))
-        if read_json_rc:
+        if read_json_rc and type(self.faq_dict) is dict:
             # for faq_category, faq_dicts in self.faq_dict.items():
             #     for faq_question, faq_content in faq_dicts.items():
             #         if type(faq_content) is list:
@@ -38,5 +38,8 @@ class NasFaqs(MethodView):
             #             faq_dicts[faq_question] = joined_multiline_content.replace("\r\n", "<br\>")
             #         self.faq_dict[faq_category] = faq_dicts
             return render_template(self.nas_faq_html_template, faq_dict=self.faq_dict)
+        else:
+            container_status_app.logger.error("FAQ data in JSON file {} could not be read or could not be converted "
+                                              "into a dictionary".format(os.environ.get('faq_data_path')))
 
         return render_template(self.nas_faq_html_template, faq_file_err=True)
