@@ -36,16 +36,17 @@
                             <div class="card-body">
                                 <div class="card">
                                     <div class="card-header bg-light">{{ faq_title }}</div>
+                                    <div class="card-body">
+                                        {% if faq_content is iterable and faq_content is not string %}
+                                            {% for line in faq_content %}
+                                                {{ line }}<br>
+                                            {% endfor %}
+                                        {% else %}
+                                            {{ faq_content }}
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    {% if faq_content is iterable and faq_content is not string %}
-                                        {% for line in faq_content %}
-                                            {{ line }}<br>
-                                        {% endfor %}
-                                    {% else %}
-                                        {{ faq_content }}
-                                    {% endif %}
-                                </div>
+
                             </div>
                         </div>
                     {% endfor %}
