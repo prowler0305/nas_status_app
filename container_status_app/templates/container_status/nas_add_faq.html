@@ -101,6 +101,11 @@
                         </div>
                     {% endif %}
                 {% endif %}
+                {% if faq_selected is defined and faq_selected is sameas False %}
+                    <div class="alert alert-danger" role="alert">
+                        Please select at least 1 FAQ to delete.
+                    </div>
+                {% endif %}
             </div>
         </div>
     {% endif %}

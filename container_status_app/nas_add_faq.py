@@ -43,10 +43,13 @@ class NasAddFaq(MethodView):
         read_json_rc, self.faq_dict = Common.rw_json_file(file_path=os.environ.get('faq_data_path'))
         if read_json_rc:
             if 'deleteFAQButton' in request.form.keys():
-                    if self.delete():
-                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_delete_rc=True)
+                    if len(request.form) > 1:
+                        if self.delete():
+                            return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_delete_rc=True)
+                        else:
+                            return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_delete_rc=False)
                     else:
-                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_delete_rc=False)
+                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_selected=False)
             else:
                 faq_category_dicts = self.faq_dict.get(request.form.get('faq_type_radio'))
                 if "\r\n" in request.form.get('faq_content'):
