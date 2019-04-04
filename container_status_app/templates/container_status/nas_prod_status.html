@@ -89,25 +89,15 @@
                             <h5 class="card-header bg-secondary text-white">User Guides</h5>
                             <div class="card-body">
                                 <ul class="list-group">
-                                    <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/Deloitte/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-primary">
-                                        VLAN and AGG Router Health Check
-                                    </a>
-                                    <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/EtherSAMDrop34/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-danger">
-                                        EtherSAM
-                                    </a>
-                                    <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/SeGW/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-warning">
-                                        Security Gateway Health Check
-                                    </a>
-                                    <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/PAM_Reset/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-success">
-                                    PAM Reset
-                                    </a>
-                                    <a href="https://usc.intranet.teldta.com/sites/NNEO_NSAA/EBAAuto/_layouts/15/start.aspx#/default.aspx" class="list-group-item list-group-item-action list-group-item-dark">
-                                    EBA
-                                    </a>
+                                    {% for application, app_status in cs.applications.items() %}
+                                        <a href="{{ app_status.sharepoint }}" class="list-group-item list-group-item-action list-group-item-{{ app_status.coloring }} list-group-item-">
+                                            {{ application }}
+                                        </a>
+                                    {% endfor %}
                                 </ul>
-                                    <p class="card-text">
-                                        <small class="text-muted">If presented with the message "Sorry, this site hasn't been shared with you." after clicking a link please reach out to the project owner to have them add you.</small>
-                                    </p>
+                                <p class="card-text">
+                                    <small class="text-muted">If presented with the message "Sorry, this site hasn't been shared with you." after clicking a link please reach out to the project owner to have them add you.</small>
+                                </p>
 
                             </div>
                         </div>
