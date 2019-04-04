@@ -35,70 +35,136 @@
             </div>
             <div class="container">
                 <div class="row">
-                    <div class="card-deck">
+                    <div class="col-lg-12">
+                        <div class="card-deck">
+                            <div class="card bg-dark">
+                                <h5 class="card-header text-white">NAS Automation Platform Version 1</h5>
+                                <div class="card-body">
+                                    <div class="card-deck">
+                                        <div class="card">
+                                            <h5 class="card-header bg-danger text-white">Not Available</h5>
+                                            <div class="card-body">
+                                                <ul class="list-group">
+                                                    {% for application, app_status in cs.applications.items() %}
+                                                        {% if cs.overall_status == 'NOT ACTIVE' %}
+                                                            {% set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
+                                                            {% set temp = app_status.update({'additional_info': ""}) %}
+                                                        {% endif %}
+                                                        {% if app_status.status == 'NOT ACTIVE' %}
+                                                            <li class="list-group-item">{{application}}
+                                                                {% if app_status.additional_info is defined and app_status.additional_info != '' %}
+                                                                    <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
+                                                                {%  endif %}
+                                                            </li>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </ul>
+                                                {% if cs.overall_status == 'NOT ACTIVE'  %}
+                                                    <div class="alert alert-info" role="alert">
+                                                        <p class="lead">Expected to be restored by:</p>
+                                                        <p class="lead">{{cs.restored_by}}</p>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <h5 class="card-header bg-success text-white">Available</h5>
+                                            <div class="card-body">
+                                                {% if cs.overall_status == 'ACTIVE' %}
+                                                    <ul class="list-group">
+                                                        {% for application, app_status in cs.applications.items() %}
+                                                            {% if app_status.status == 'ACTIVE' %}
+                                                                <li class="list-group-item">{{application}}</li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card bg-dark">
+                                <h5 class="card-header text-white">NAS Automation Platform Version 2</h5>
+                                <div class="card-body">
+                                    <div class="card-deck">
+                                        <div class="card">
+                                            <h5 class="card-header bg-danger text-white">Not Available</h5>
+                                            <div class="card-body">
+                                                <ul class="list-group">
+                                                    {% for application, app_status in cs.new_platform_apps.items() %}
+                                                        {% if cs.overall_status == 'NOT ACTIVE' %}
+                                                            {% set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
+                                                            {% set temp = app_status.update({'additional_info': ""}) %}
+                                                        {% endif %}
+                                                        {% if app_status.status == 'NOT ACTIVE' %}
+                                                            <li class="list-group-item">{{application}}
+                                                                {% if app_status.additional_info is defined and app_status.additional_info != '' %}
+                                                                    <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
+                                                                {%  endif %}
+                                                            </li>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </ul>
+                                                {% if cs.overall_status == 'NOT ACTIVE'  %}
+                                                    <div class="alert alert-info" role="alert">
+                                                        <p class="lead">Expected to be restored by:</p>
+                                                        <p class="lead">{{cs.restored_by}}</p>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <h5 class="card-header bg-success text-white">Available</h5>
+                                            <div class="card-body">
+                                                {% if cs.overall_status == 'ACTIVE' %}
+                                                    <ul class="list-group">
+                                                        {% for application, app_status in cs.new_platform_apps.items() %}
+                                                            {% if app_status.status == 'ACTIVE' %}
+                                                                <li class="list-group-item">{{application}}</li>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card-deck">
                             <div class="card">
-                                <h5 class="card-header bg-danger text-white">Not Available</h5>
+                                <h5 class="card-header bg-secondary text-white">Contact Us</h5>
+                                <div class="card-body">
+                                    <p>For questions, click the link to generate an email to the
+                                        <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Core Automation Engineering team.</a>
+                                    </p>
+                                </div>
+                                <h5 class="card-footer m-0"><a href="{{ url_for('nas_faqs') }}" class="badge badge-primary btn-block">FAQs</a></h5>
+                            </div>
+                            <div class="card">
+                                <h5 class="card-header bg-secondary text-white">User Guides</h5>
                                 <div class="card-body">
                                     <ul class="list-group">
                                         {% for application, app_status in cs.applications.items() %}
-                                            {% if cs.overall_status == 'NOT ACTIVE' %}
-                                                {% set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
-                                                {% set temp = app_status.update({'additional_info': ""}) %}
-                                            {% endif %}
-                                            {% if app_status.status == 'NOT ACTIVE' %}
-                                                <li class="list-group-item">{{application}}
-                                                    {% if app_status.additional_info is defined and app_status.additional_info != '' %}
-                                                        <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
-                                                    {%  endif %}
-                                                </li>
-                                            {% endif %}
+                                            <a href="{{ app_status.sharepoint }}" class="list-group-item list-group-item-action list-group-item-{{ app_status.coloring }} list-group-item-">
+                                                {{ application }}
+                                            </a>
+                                        {% endfor %}
+                                        {% for application, app_status in cs.new_platform_apps.items() %}
+                                            <a href="{{ app_status.sharepoint }}" class="list-group-item list-group-item-action list-group-item-{{ app_status.coloring }} list-group-item-">
+                                                {{ application }}
+                                            </a>
                                         {% endfor %}
                                     </ul>
-                                    {% if cs.overall_status == 'NOT ACTIVE'  %}
-                                        <div class="alert alert-info" role="alert">
-                                            <p class="lead">Expected to be restored by:</p>
-                                            <p class="lead">{{cs.restored_by}}</p>
-                                        </div>
-                                    {% endif %}
+                                    <p class="card-text">
+                                        <small class="text-muted">If presented with the message "Sorry, this site hasn't been shared with you." after clicking a link please reach out to the project owner to have them add you.</small>
+                                    </p>
                                 </div>
-                            </div>
-                            <div class="card">
-                                <h5 class="card-header bg-success text-white">Available</h5>
-                                <div class="card-body">
-                                    {% if cs.overall_status == 'ACTIVE' %}
-                                        <ul class="list-group">
-                                            {% for application, app_status in cs.applications.items() %}
-                                                {% if app_status.status == 'ACTIVE' %}
-                                                    <li class="list-group-item">{{application}}</li>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        <div class="card">
-                            <h5 class="card-header bg-secondary text-white">Contact Us</h5>
-                            <div class="card-body">
-                                <p>For questions, click the link to generate an email to the
-                                    <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Core Automation Engineering team.</a>
-                                </p>
-                            </div>
-                            <h5 class="card-footer m-0"><a href="{{ url_for('nas_faqs') }}" class="badge badge-primary btn-block">FAQs</a></h5>
-                        </div>
-                        <div class="card">
-                            <h5 class="card-header bg-secondary text-white">User Guides</h5>
-                            <div class="card-body">
-                                <ul class="list-group">
-                                    {% for application, app_status in cs.applications.items() %}
-                                        <a href="{{ app_status.sharepoint }}" class="list-group-item list-group-item-action list-group-item-{{ app_status.coloring }} list-group-item-">
-                                            {{ application }}
-                                        </a>
-                                    {% endfor %}
-                                </ul>
-                                <p class="card-text">
-                                    <small class="text-muted">If presented with the message "Sorry, this site hasn't been shared with you." after clicking a link please reach out to the project owner to have them add you.</small>
-                                </p>
-
                             </div>
                         </div>
                     </div>

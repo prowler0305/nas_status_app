@@ -72,6 +72,16 @@
         "coloring": "primary"
       }
     },
+    "new_platform_apps":
+    {
+      "B2B":
+      {
+        "additional_info": "",
+        "status": "ACTIVE",
+        "sharepoint": "https://usc.intranet.teldta.com/sites/NNEO_NSAA/B2BProvisioningAutomation/_layouts/15/start.aspx#/default.aspx",
+        "coloring": "success"
+      }
+    },
     "display_name":"NAS Automation Platform",
     "overall_status":"ACTIVE",
     "restored_by":"11\/29\/2013 07:30 AM CST"
