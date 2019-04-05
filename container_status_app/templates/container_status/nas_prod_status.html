@@ -25,11 +25,12 @@
         {% if cs is defined %}
             <div class="jumbotron jumbotron-fluid">
                 <div class="container">
-                    {% if cs.overall_status == "ACTIVE" %}
-                        <h1 class="display-4">{{cs.display_name}}<span class="badge badge-success">{{cs.overall_status}}</span></h1>
-                    {% else %}
-                        <h1 class="display-4">{{cs.display_name}}<span class="badge badge-danger">{{cs.overall_status}}</span></h1>
-                    {% endif %}
+                    <h1 class="display-4">Network Automation Services Platform</h1>
+{#                    {% if cs.overall_status == "ACTIVE" %}#}
+{#                        <h1 class="display-4">{{cs.display_name}}<span class="badge badge-success">{{cs.overall_status}}</span></h1>#}
+{#                    {% else %}#}
+{#                        <h1 class="display-4">{{cs.display_name}}<span class="badge badge-danger">{{cs.overall_status}}</span></h1>#}
+{#                    {% endif %}#}
 
                 </div>
             </div>
@@ -38,7 +39,11 @@
                     <div class="col-lg-12">
                         <div class="card-deck">
                             <div class="card bg-dark">
-                                <h5 class="card-header text-white">NAS Automation Platform Version 1</h5>
+                                {% if cs.overall_status == "ACTIVE" %}
+                                    <h5 class="card-header text-white">NAS Automation Platform Version 1 <span class="badge-pill badge-success">{{ cs.overall_status }}</span></h5>
+                                {% else %}
+                                    <h5 class="card-header text-white">NAS Automation Platform Version 1 <span class="badge-pill badge-danger">{{ cs.overall_status }}</span></h5>
+                                {% endif %}
                                 <div class="card-body">
                                     <div class="card-deck">
                                         <div class="card">
@@ -51,7 +56,8 @@
                                                             {% set temp = app_status.update({'additional_info': ""}) %}
                                                         {% endif %}
                                                         {% if app_status.status == 'NOT ACTIVE' %}
-                                                            <li class="list-group-item">{{application}}
+                                                            <li class="list-group-item list-group-item-danger">
+                                                                {{application}}
                                                                 {% if app_status.additional_info is defined and app_status.additional_info != '' %}
                                                                     <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
                                                                 {%  endif %}
@@ -74,7 +80,7 @@
                                                     <ul class="list-group">
                                                         {% for application, app_status in cs.applications.items() %}
                                                             {% if app_status.status == 'ACTIVE' %}
-                                                                <li class="list-group-item">{{application}}</li>
+                                                                <li class="list-group-item list-group-item-{{ app_status.coloring }}">{{application}}</li>
                                                             {% endif %}
                                                         {% endfor %}
                                                     </ul>
@@ -85,7 +91,11 @@
                                 </div>
                             </div>
                             <div class="card bg-dark">
-                                <h5 class="card-header text-white">NAS Automation Platform Version 2</h5>
+                                {% if cs.p2_overall_status == "ACTIVE" %}
+                                    <h5 class="card-header text-white">NAS Automation Platform Version 2 <span class="badge-pill badge-success">{{ cs.p2_overall_status }}</span></h5>
+                                {% else %}
+                                    <h5 class="card-header text-white">NAS Automation Platform Version 2 <span class="badge-pill badge-danger">{{ cs.p2_overall_status }}</span></h5>
+                                {% endif %}
                                 <div class="card-body">
                                     <div class="card-deck">
                                         <div class="card">
@@ -93,12 +103,12 @@
                                             <div class="card-body">
                                                 <ul class="list-group">
                                                     {% for application, app_status in cs.new_platform_apps.items() %}
-                                                        {% if cs.overall_status == 'NOT ACTIVE' %}
+                                                        {% if cs.p2_overall_status == 'NOT ACTIVE' %}
                                                             {% set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
                                                             {% set temp = app_status.update({'additional_info': ""}) %}
                                                         {% endif %}
                                                         {% if app_status.status == 'NOT ACTIVE' %}
-                                                            <li class="list-group-item">{{application}}
+                                                            <li class="list-group-item list-group-item-danger">{{application}}
                                                                 {% if app_status.additional_info is defined and app_status.additional_info != '' %}
                                                                     <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
                                                                 {%  endif %}
@@ -106,10 +116,10 @@
                                                         {% endif %}
                                                     {% endfor %}
                                                 </ul>
-                                                {% if cs.overall_status == 'NOT ACTIVE'  %}
+                                                {% if cs.p2_overall_status == 'NOT ACTIVE'  %}
                                                     <div class="alert alert-info" role="alert">
                                                         <p class="lead">Expected to be restored by:</p>
-                                                        <p class="lead">{{cs.restored_by}}</p>
+                                                        <p class="lead">{{cs.p2_restored_by}}</p>
                                                     </div>
                                                 {% endif %}
                                             </div>
@@ -117,11 +127,11 @@
                                         <div class="card">
                                             <h5 class="card-header bg-success text-white">Available</h5>
                                             <div class="card-body">
-                                                {% if cs.overall_status == 'ACTIVE' %}
+                                                {% if cs.p2_overall_status == 'ACTIVE' %}
                                                     <ul class="list-group">
                                                         {% for application, app_status in cs.new_platform_apps.items() %}
                                                             {% if app_status.status == 'ACTIVE' %}
-                                                                <li class="list-group-item">{{application}}</li>
+                                                                <li class="list-group-item list-group-item-{{ app_status.coloring }}">{{application}}</li>
                                                             {% endif %}
                                                         {% endfor %}
                                                     </ul>
