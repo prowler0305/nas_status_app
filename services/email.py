@@ -3,7 +3,7 @@ from email.message import EmailMessage
 
 
 class EmailServices(object):
-    def __init__(self, subject, from_address, to_address):
+    def __init__(self, subject, from_address, to_address, app_instance=None):
         """
         Encapsulates ability to send email using USCC mail server
         """
@@ -13,6 +13,7 @@ class EmailServices(object):
         self.subject = subject
         self.from_address = from_address
         self.to_address = to_address
+        self.app_name = app_instance
 
     def send_email(self, email_content: str, subject=None, from_address=None, to_address=None):
         """
@@ -36,4 +37,9 @@ class EmailServices(object):
         self.message_object['From'] = from_address
         self.message_object['To'] = to_address
         mail_server = smtplib.SMTP(self.mail_server_url, self.mail_server_port)
-        mail_server.send_message(self.message_object)
+        send_resp = mail_server.send_message(self.message_object)
+        if len(send_resp) == 0:
+            return True
+        else:
+            self.app_name.logger.error(str(send_resp))
+            return False
