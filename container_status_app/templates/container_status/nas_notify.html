@@ -22,141 +22,225 @@
             <h1 class="display-4">Generate NAS Platform Notifications</h1>
         </div>
     </div>
-    <div class="card-deck m-2">
-        <div class="card">
-            <h5 class="card-header bg-info">NAS Platform Outage</h5>
-            <div class="card-body">
-                <p>Use the form below to generate an outage email to all registered users of the NAS Platform Status
-                    application. Submitting this form will also update the overall status for the NAS Platform displayed
-                    on the <a href="{{ url_for('container_status') }}">NAS Automation Status UI</a>.
-                </p>
-                <form method="POST" autocomplete="off">
-                    <h5>Outage Start</h5>
-                    <div class="form-row">
-                        <div class="from-group col-auto">
-                            <label for="outageStartDate">Date</label>
-                            <input type="text" class="form-control" name="outage_start_date" id="outageStartDate" placeholder="mm/dd/YYYY" required autocomplete="on">
-                        </div>
-                        <div class="form-group col-auto">
-                            <label for="outageStartTime">Time</label>
-                            <input type="text" class="form-control" name="outage_start_time" id="outageStartTime" placeholder="HH:MM" required autocomplete="on">
-                        </div>
-                        <div class="form-group col-auto">
-                            <label for="timeOfDayStart">AM/PM</label>
-                            <div class="input-group-append">
-                                <select id="timeOfDayStart" class="form-control" name="time_of_day_start">
-                                    <option>Choose...</option>
-                                    <option>AM</option>
-                                    <option>PM</option>
-                                </select>
-                                <div class="input-group-text">CST</div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <h5 class="card-header bg-info">NAS Platform Outage</h5>
+                    <div class="card-body">
+                        <p>Use the form below to generate an outage email to all registered users of the NAS Platform Status
+                            application. Submitting this form will also update the overall status for the NAS Platform displayed
+                            on the <a href="{{ url_for('container_status') }}">NAS Automation Status UI</a>.
+                        </p>
+                        <form method="POST" autocomplete="off">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="platform_name" id="oldPlatform" value="old_platform" required>
+                                <label class="form-check-label" for="oldPlatform">Old Platform</label>
                             </div>
-                            {% if tods_error is defined and tods_error is sameas True %}
-                                <div class="alert alert-danger" role="alert">AM/PM not selected.</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <h5>Outage End</h5>
-                    <div class="form-row">
-                        <div class="form-group col-auto">
-                            <label for="outageEndDate">Date</label>
-                            <input type="text" class="form-control" name="outage_end_date" id="outageEndDate" placeholder="mm/dd/YYYY" required autocomplete="on">
-                        </div>
-                        <div class="form-group col-auto">
-                            <label for="outageEndTime">Time</label>
-                            <input type="text" class="form-control" name="outage_end_time" id="outageEndTime" placeholder="HH:MM" required autocomplete="on">
-                        </div>
-                        <div class="form-group col-auto">
-                            <label for="timeOfDayEnd">AM/PM</label>
-                            <div class="input-group-append">
-                                <select id="timeOfDayEnd" class="form-control" name="time_of_day_end">
-                                    <option>Choose...</option>
-                                    <option>AM</option>
-                                    <option>PM</option>
-                                </select>
-                                <div class="input-group-text">CST</div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="platform_name" id="newPlatform" value="new_platform" required>
+                                <label class="form-check-label" for="newPlatform">New Platform</label>
                             </div>
-                            {% if tode_error is defined and tode_error is sameas True %}
-                                <div class="alert alert-danger" role="alert">AM/PM not selected.</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="form-group col-auto">
-                        <label for="whyOutage">Reason(optional)</label>
-                        <textarea class="form-control" name="reason_textarea" id="whyOutage" rows="3"></textarea>
-                    </div>
-                    {% if status_file_update_err is defined %}
-                        <div class="alert alert-danger" role="alert">
-                            File {{ status_file_update_err }} could not be updated. NAS Platform Status App data needs to be
-                            updated manually.
-                        </div>
-                    {% endif %}
-                    <button type="submit" name="nas_outage_form" class="btn btn-primary mt-2">Submit</button>
-                </form>
-            </div>
-        </div>
-        <div class="card">
-            <h5 class="card-header bg-info">Update NAS Platform/Application Status</h5>
-            <div class="card-body">
-                <p>Use the toggle switches below to update the statuses of the NAS Platform and/or its associated applications.</p>
-                <h3 class="card-title">Current Status</h3>
-                <form method="POST" autocomplete="off">
-                    <div class="form-group">
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                {% if nas_prod_status_data.overall_status == 'ACTIVE' %}
-                                    {% set disabled_yes = 'disabled' %}
-                                    {% set check_it = 'checked' %}
-                                    {% set badge_type = 'badge-success' %}
-                                {% else %}
-                                    {% set badge_type = 'badge-danger' %}
-                                {% endif %}
-                                <h5>NAS Platform Status: <span class="badge {{ badge_type }}">{{ nas_prod_status_data.overall_status }}</span></h5>
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" name="{{ nas_prod_status_data.display_name }}_status_switch"
-                                           id="nasStatusSwitch" {{ check_it }} {{ disabled_yes }} data-size="lg">
-                                    <label class="custom-control-label font-weight-bold" for="nasStatusSwitch">NAS Production Status</label>
+                            <h5>Outage Start</h5>
+                            <div class="form-row">
+                                <div class="from-group col-auto">
+                                    <label for="outageStartDate">Date</label>
+                                    <input type="text" class="form-control" name="outage_start_date" id="outageStartDate" placeholder="mm/dd/YYYY" required autocomplete="on">
                                 </div>
-                                <div class="alert alert-warning" role="alert">
-                                    <p>You can only change the status from <span class="font-weight-bold">NOT ACTIVE</span> to
-                                        <span class="font-weight-bold">ACTIVE</span>. If you need to set the status to
-                                        <span class="font-weight-bold">NOT ACTIVE</span> then use the NAS Platform Outage form
-                                        to the right.
-                                    </p>
+                                <div class="form-group col-auto">
+                                    <label for="outageStartTime">Time</label>
+                                    <input type="text" class="form-control" name="outage_start_time" id="outageStartTime" placeholder="HH:MM" required autocomplete="on">
                                 </div>
-                            </li>
-                            {% for app, app_status_data in nas_prod_status_data.applications.items() %}
-                                <li class="list-group-item">
-                                    {% if app_status_data.status == 'ACTIVE' %}
-                                        {% set app_badge_type = 'badge-success' %}
-                                    {% else %}
-                                        {% set app_badge_type = 'badge-danger' %}
+                                <div class="form-group col-auto">
+                                    <label for="timeOfDayStart">AM/PM</label>
+                                    <div class="input-group-append">
+                                        <select id="timeOfDayStart" class="form-control" name="time_of_day_start">
+                                            <option>Choose...</option>
+                                            <option>AM</option>
+                                            <option>PM</option>
+                                        </select>
+                                        <div class="input-group-text">CST</div>
+                                    </div>
+                                    {% if tods_error is defined and tods_error is sameas True %}
+                                        <div class="alert alert-danger" role="alert">AM/PM not selected.</div>
                                     {% endif %}
-                                    <h5>{{ app }}: <span class="badge {{ app_badge_type }}">{{ app_status_data.status }}</span></h5>
-                                    <div class="custom-control custom-switch">
-                                        {% if app_status_data.status == 'ACTIVE' %}
-                                            {% set app_level_check_it = 'checked' %}
-                                        {% endif %}
-                                        <input type="checkbox" class="custom-control-input" name="{{ app }}_status_switch" id="{{ app }}StatusSwitch" {{ app_level_check_it }}>
-                                        <label class="custom-control-label font-weight-bold" for="{{ app }}StatusSwitch">{{ app }}</label>
+                                </div>
+                            </div>
+                            <h5>Outage End</h5>
+                            <div class="form-row">
+                                <div class="form-group col-auto">
+                                    <label for="outageEndDate">Date</label>
+                                    <input type="text" class="form-control" name="outage_end_date" id="outageEndDate" placeholder="mm/dd/YYYY" required autocomplete="on">
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="outageEndTime">Time</label>
+                                    <input type="text" class="form-control" name="outage_end_time" id="outageEndTime" placeholder="HH:MM" required autocomplete="on">
+                                </div>
+                                <div class="form-group col-auto">
+                                    <label for="timeOfDayEnd">AM/PM</label>
+                                    <div class="input-group-append">
+                                        <select id="timeOfDayEnd" class="form-control" name="time_of_day_end">
+                                            <option>Choose...</option>
+                                            <option>AM</option>
+                                            <option>PM</option>
+                                        </select>
+                                        <div class="input-group-text">CST</div>
                                     </div>
-                                    <div class="form-group pt-3">
-                                        <label class="lead" for="appInfo">Additional Information</label>
-                                        <p><small>Use this area to display any additional information you want to the end users. For example, when the application should be restored.</small></p>
-                                        <textarea class="form-control" name="{{ app }}_textarea" id="appInfo" rows="3"></textarea>
-                                    </div>
-                                </li>
-                            {% endfor %}
+                                    {% if tode_error is defined and tode_error is sameas True %}
+                                        <div class="alert alert-danger" role="alert">AM/PM not selected.</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="form-group col-auto">
+                                <label for="whyOutage">Reason(optional)</label>
+                                <textarea class="form-control" name="reason_textarea" id="whyOutage" rows="3"></textarea>
+                            </div>
+                            {% if status_file_update_err is defined %}
+                                <div class="alert alert-danger" role="alert">
+                                    File {{ status_file_update_err }} could not be updated. NAS Platform Status App data needs to be
+                                    updated manually.
+                                </div>
+                            {% endif %}
+                            <button type="submit" name="nas_outage_form" class="btn btn-primary mt-2">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-pills card-header-tabs" id="oldArchTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="oldarch-tab" data-toggle="tab" href="#oldarch" role="tab" aria-controls="oldarch" aria-selected="true">
+                                    Old Platform
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="newarch-tab" data-toggle="tab" href="#newarch" role="tab" aria-controls="newarch" aria-selected="false">
+                                    New Platform
+                                </a>
+                            </li>
                         </ul>
                     </div>
-                    <button type="submit" name="toggle_switch_form" class="btn btn-primary mt-2">Submit</button>
-                </form>
+                    <div class="card-body">
+                        <p>Use the toggle switches below to update the statuses of the NAS Platform and/or its associated applications.</p>
+                        <div class="tab-content" id="appStatusByArchContent">
+                            <div class="tab-pane fade show active" id="oldarch" role="tabpanel" aria-labelledby="oldarch-tab">
+                                <form method="POST" autocomplete="off">
+                                    <div class="form-group">
+                                        <ul class="list-group">
+                                            <li class="list-group-item">
+                                                {% if nas_prod_status_data.overall_status == 'ACTIVE' %}
+                                                    {% set disabled_yes = 'disabled' %}
+                                                    {% set check_it = 'checked' %}
+                                                    {% set badge_type = 'badge-success' %}
+                                                {% else %}
+                                                    {% set badge_type = 'badge-danger' %}
+                                                {% endif %}
+                                                <h5>NAS Platform Status: <span class="badge {{ badge_type }}">{{ nas_prod_status_data.overall_status }}</span></h5>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" name="{{ nas_prod_status_data.display_name }}_status_switch"
+                                                           id="nasStatusSwitch" {{ check_it }} {{ disabled_yes }} data-size="lg">
+                                                    <label class="custom-control-label font-weight-bold" for="nasStatusSwitch">NAS Platform Status</label>
+                                                </div>
+                                                <div class="alert alert-warning" role="alert">
+                                                    <p>You can only change the status from <span class="font-weight-bold">NOT ACTIVE</span> to
+                                                        <span class="font-weight-bold">ACTIVE</span>. If you need to set the status to
+                                                        <span class="font-weight-bold">NOT ACTIVE</span> then use the NAS Platform Outage form
+                                                        to the right.
+                                                    </p>
+                                                </div>
+                                            </li>
+                                            {% for app, app_status_data in nas_prod_status_data.applications.items() %}
+                                                <li class="list-group-item">
+                                                    {% if app_status_data.status == 'ACTIVE' %}
+                                                        {% set app_badge_type = 'badge-success' %}
+                                                    {% else %}
+                                                        {% set app_badge_type = 'badge-danger' %}
+                                                    {% endif %}
+                                                    <h5>{{ app }}: <span class="badge {{ app_badge_type }}">{{ app_status_data.status }}</span></h5>
+                                                    <div class="custom-control custom-switch">
+                                                        {% if app_status_data.status == 'ACTIVE' %}
+                                                            {% set app_level_check_it = 'checked' %}
+                                                        {% endif %}
+                                                        <input type="checkbox" class="custom-control-input" name="{{ app }}_status_switch" id="{{ app }}StatusSwitch" {{ app_level_check_it }}>
+                                                        <label class="custom-control-label font-weight-bold" for="{{ app }}StatusSwitch">{{ app }}</label>
+                                                    </div>
+                                                    <div class="form-group pt-3">
+                                                        <label class="lead" for="appInfo">Additional Information</label>
+                                                        <p><small>Use this area to display any additional information you want to the end users. For example, when the application should be restored.</small></p>
+                                                        <textarea class="form-control" name="{{ app }}_textarea" id="appInfo" rows="3"></textarea>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <button type="submit" name="toggle_switch_form" class="btn btn-primary mt-2">Submit</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade show" id="newarch" role="tabpanel" aria-labelledby="newarch-tab">
+                                <form method="POST" autocomplete="off">
+                                    <div class="form-group">
+                                        <ul class="list-group">
+                                            <li class="list-group-item">
+                                                {% if nas_prod_status_data.p2_overall_status == 'ACTIVE' %}
+                                                    {% set p2_disabled_yes = 'disabled' %}
+                                                    {% set p2_check_it = 'checked' %}
+                                                    {% set badge_type = 'badge-success' %}
+                                                {% else %}
+                                                    {% set badge_type = 'badge-danger' %}
+                                                {% endif %}
+                                                <h5>NAS Platform Status: <span class="badge {{ badge_type }}">{{ nas_prod_status_data.p2_overall_status }}</span></h5>
+                                                <div class="custom-control custom-switch">
+                                                    <input type="checkbox" class="custom-control-input" name="{{ nas_prod_status_data.p2_display_name }}_status_switch"
+                                                           id="nasP2StatusSwitch" {{ p2_check_it }} {{ p2_disabled_yes }} data-size="lg">
+                                                    <label class="custom-control-label font-weight-bold" for="nasP2StatusSwitch">NAS Platform Status</label>
+                                                </div>
+                                                <div class="alert alert-warning" role="alert">
+                                                    <p>You can only change the status from <span class="font-weight-bold">NOT ACTIVE</span> to
+                                                        <span class="font-weight-bold">ACTIVE</span>. If you need to set the status to
+                                                        <span class="font-weight-bold">NOT ACTIVE</span> then use the NAS Platform Outage form
+                                                        to the right.
+                                                    </p>
+                                                </div>
+                                            </li>
+                                            {% for app, app_status_data in nas_prod_status_data.new_platform_apps.items() %}
+                                                <li class="list-group-item">
+                                                    {% if app_status_data.status == 'ACTIVE' %}
+                                                        {% set app_badge_type = 'badge-success' %}
+                                                    {% else %}
+                                                        {% set app_badge_type = 'badge-danger' %}
+                                                    {% endif %}
+                                                    <h5>{{ app }}: <span class="badge {{ app_badge_type }}">{{ app_status_data.status }}</span></h5>
+                                                    <div class="custom-control custom-switch">
+                                                        {% if app_status_data.status == 'ACTIVE' %}
+                                                            {% set app_level_check_it = 'checked' %}
+                                                        {% endif %}
+                                                        <input type="checkbox" class="custom-control-input" name="{{ app }}_status_switch" id="{{ app }}StatusSwitch" {{ app_level_check_it }}>
+                                                        <label class="custom-control-label font-weight-bold" for="{{ app }}StatusSwitch">{{ app }}</label>
+                                                    </div>
+                                                    <div class="form-group pt-3">
+                                                        <label class="lead" for="appP2Info">Additional Information</label>
+                                                        <p><small>Use this area to display any additional information you want to the end users. For example, when the application should be restored.</small></p>
+                                                        <textarea class="form-control" name="{{ app }}_textarea" id="appP2Info" rows="3"></textarea>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <button type="submit" name="p2_toggle_switch_form" class="btn btn-primary mt-2">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="../../static/bootstrap.min.js"></script>

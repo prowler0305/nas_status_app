@@ -6,10 +6,11 @@ WHAT:
 There will be an outage of the NAS Automation Platform.
 
 The following Automation's will be unavailable during the outage time:
-o	VLAN Failover
 o	AGG Router Health Check
+o	Ethersam Nokia Single Site
 o	SeGW Health Check
-o	EtherSAM Nokia Single Site
+o	VLAN Failover
+
 
 Please use the following URL to view the current status.
 
@@ -20,4 +21,4 @@ WHY:
 
 WHEN:
 
-10/29/1983 at 12:22 PM  CST and is expected to be restored by 11/29/2013 at 07:30 AM
+02/04/2019 at 12:22 PM  CST and is expected to be restored by 02/05/2019 at 08:30 AM

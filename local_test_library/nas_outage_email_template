@@ -6,10 +6,7 @@ WHAT:
 There will be an outage of the NAS Automation Platform.
 
 The following Automation's will be unavailable during the outage time:
-o	VLAN Failover
-o	AGG Router Health Check
-o	SeGW Health Check
-o	EtherSAM Nokia Single Site
+{app}
 
 Please use the following URL to view the current status.
 
