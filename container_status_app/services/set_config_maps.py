@@ -18,29 +18,38 @@ class SetConfigMaps(object):
         on pod restart it will copy from that read only location and update the persistent storage directory location.
     """
     def __init__(self):
-        self.persistent_storage_path = os.environ.get('container_status_path')
-        self.config_map_path = os.environ.get('container_status_config_path')
-        self._container_status_config(config_map_file_path=self.config_map_path,
-                                      persistent_storage_path=self.persistent_storage_path)
+        self.config_mapper = dict()
+        self._create_config_mapper()
+        self._container_status_config(self.config_mapper)
 
-    def _container_status_config(self, config_map_file_path, persistent_storage_path):
+    def _create_config_mapper(self):
         """
-        Takes the container_status_data JSON file in the config map and sets the persistent storage file.
-
-        :param config_map_file_path: Path to the mounted read only config map file
-        :param persistent_storage_path: Path to the mounted persistent storage directory
-        :return:
+        Sets the keys and values in the class attribute dictionary to be used in the _container_status_config() method
+        :return: None
         """
 
-        file_path_error_message = "Environment variable {} points to path that doesn't exist."
+        self.config_mapper[os.environ.get('container_status_config_path')] = os.environ.get('container_status_path')
+        self.config_mapper[os.environ.get('faq_data_config_path')] = os.environ.get('faq_data_path')
 
-        if os.path.exists(config_map_file_path):
-            if os.path.exists(persistent_storage_path):
-                copyfile(src=config_map_file_path, dst=persistent_storage_path)
-                return True
+    def _container_status_config(self, config_mapper_dict):
+        """
+        Takes any JSON file in the config map and sets the persistent storage file.
+
+        :param config_mapper_dict: Dictionary container config map(read only file) location to persistent(read-write)
+        location
+        :return: True or False
+        """
+
+        file_path_error_message = "Path {} doesn't exist."
+
+        for config_map_file_path, persistent_storage_path in config_mapper_dict.items():
+            if os.path.exists(config_map_file_path):
+                if os.path.exists(persistent_storage_path):
+                    copyfile(src=config_map_file_path, dst=persistent_storage_path)
+                    return True
+                else:
+                    container_status_app.logger.error(file_path_error_message.format(persistent_storage_path))
+                    return False
             else:
-                container_status_app.logger.error(file_path_error_message.format(persistent_storage_path))
+                container_status_app.logger.error(file_path_error_message.format(config_map_file_path))
                 return False
-        else:
-            container_status_app.logger.error(file_path_error_message.format(config_map_file_path))
-            return False
