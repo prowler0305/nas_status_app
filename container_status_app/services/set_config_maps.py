@@ -37,7 +37,7 @@ class SetConfigMaps(object):
 
         :param config_mapper_dict: Dictionary container config map(read only file) location to persistent(read-write)
         location
-        :return: True or False
+        :return:
         """
 
         file_path_error_message = "Path {} doesn't exist."
@@ -47,10 +47,9 @@ class SetConfigMaps(object):
                 if os.path.exists(persistent_storage_path):
                     copied_to = copyfile(src=config_map_file_path, dst=persistent_storage_path)
                     container_status_app.logger.info("Source file {} copied to {}.".format(config_map_file_path, copied_to))
-                    return True
                 else:
                     container_status_app.logger.error(file_path_error_message.format(persistent_storage_path))
-                    return False
             else:
                 container_status_app.logger.error(file_path_error_message.format(config_map_file_path))
-                return False
+
+        return
