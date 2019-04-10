@@ -1,0 +1,24 @@
+                U.S. CELLULAR® SA3
+CRITICAL BULLETIN  NAS AUTOMATION PLATFORM OUTAGE
+
+WHAT:
+
+There will be an outage of the NAS Automation Platform.
+
+The following Automation's will be unavailable during the outage time:
+o	AGG Router Health Check
+o	Ethersam Nokia Single Site
+o	SeGW Health Check
+o	VLAN Failover
+
+
+Please use the following URL to view the current status.
+
+https://container-status.engapps.uscc.com/nas_status
+
+WHY:
+
+
+WHEN:
+
+02/04/2019 at 12:22 PM  CST and is expected to be restored by 03/21/2019 at 08:30 PM
