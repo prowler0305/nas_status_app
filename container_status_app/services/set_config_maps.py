@@ -45,7 +45,8 @@ class SetConfigMaps(object):
         for config_map_file_path, persistent_storage_path in config_mapper_dict.items():
             if os.path.exists(config_map_file_path):
                 if os.path.exists(persistent_storage_path):
-                    copyfile(src=config_map_file_path, dst=persistent_storage_path)
+                    copied_to = copyfile(src=config_map_file_path, dst=persistent_storage_path)
+                    container_status_app.logger.info("Source file {} copied to {}.".format(config_map_file_path, copied_to))
                     return True
                 else:
                     container_status_app.logger.error(file_path_error_message.format(persistent_storage_path))
