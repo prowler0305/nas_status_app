@@ -1,13 +1,12 @@
 # Flask
-from flask import render_template, redirect, request, url_for
+from flask import render_template, request
 from flask.views import MethodView
 
 # Container status app specific
-from common.common import Common
+from container_status_app.common.common import Common
 from container_status_app import container_status_app
 
 # Misc
-import json
 import os
 
 

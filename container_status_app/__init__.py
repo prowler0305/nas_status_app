@@ -10,7 +10,7 @@ from container_status_app.update_container_status import UpdateContainer
 from container_status_app.nas_notifications import NasNotifications
 from container_status_app.nas_faqs import NasFaqs
 from container_status_app.nas_add_faq import NasAddFaq
-from services.set_config_maps import SetConfigMaps
+from container_status_app.services.set_config_maps import SetConfigMaps
 
 if 'container-status-app' in os.environ.get('hostname'.upper()):
     SetConfigMaps()

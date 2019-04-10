@@ -4,7 +4,7 @@ from flask.views import MethodView
 
 # USCC
 from container_status_app.forms import ContainerForm
-from common.common import Common
+from container_status_app.common.common import Common
 
 # Misc
 import json
