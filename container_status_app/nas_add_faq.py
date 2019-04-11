@@ -46,15 +46,23 @@ class NasAddFaq(MethodView):
             if 'deleteFAQButton' in request.form.keys():
                     if len(request.form) > 1:
                         if self.delete():
-                            return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_delete_rc=True)
+                            return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
+                                                   faq_delete_rc=True)
                         else:
-                            return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_delete_rc=False)
+                            return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
+                                                   faq_delete_rc=False)
                     else:
-                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_selected=False)
+                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
+                                               faq_selected=False)
             else:
                 if 'faq_file' in request.files:
                     if self.process_faq_file():
-                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict)
+                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
+                                               faq_added_rc=True)
+                    else:
+                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
+                                               faq_added_rc=False)
+
                 faq_category_dicts = self.faq_dict.get(request.form.get('faq_type_radio'))
                 if "\r\n" in request.form.get('faq_content'):
                     faq_content_data = request.form.get('faq_content').split("\r\n")
@@ -117,18 +125,46 @@ class NasAddFaq(MethodView):
             return False
 
     def allowed_file_types(self, filename):
+        """
+        Checks a file to make sure that it is one of the allowable types.
+        :param filename:
+        :return:
+        """
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in self.allowed_extensions
 
     def process_faq_file(self):
         """
+        Processes an FAQ file uploaded via the upload element on the /nas/add/faq page.
 
         :return:
         """
+
+        question_keywords = ['Question', 'QUESION', 'question']
+        answer_keywords = ['Answer', 'answer', 'ANSWER']
 
         file = request.files.get('faq_file')
         if file.filename == '':
             return False
         if file and self.allowed_file_types(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
-            return True
+            faq_category_dicts = self.faq_dict.get(request.form.get('faq_type_radio'))
+            current_question = None
+            for line in file:
+                if line.decode('utf-8').split(':', 1)[0] in question_keywords:
+                    faq_category_dicts[line.decode('utf-8').split(':', 1)[1]] = None
+                    current_question = line.decode('utf-8').split(':', 1)[1]
+
+                if line.decode('utf-8').split(':', 1)[0] in answer_keywords:
+                    faq_category_dicts[current_question] = line.decode('utf-8').split(':', 1)[1]
+
+            self.faq_dict[request.form.get('faq_type_radio')] = faq_category_dicts
+            update_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('faq_data_path'),
+                                                               mode='write',
+                                                               output_dict=self.faq_dict)
+            if update_json_rc:
+                container_status_app.logger.info("FAQ Category: {} updated".format(request.form.get('faq_type_radio').upper()))
+                return True
+            else:
+                container_status_app.logger.error("Unable to add to FAQ Category: {}".format(request.form.get('faq_type_radio').upper()))
+                return False
+            # file.save(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))

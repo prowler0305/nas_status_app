@@ -17,7 +17,7 @@ class BaseConfig:
     JWT_BLACKLIST_ENABLED = True
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
     PREFERRED_URL_SCHEME = 'https'
-    UPLOAD_FOLDER = os.path.join(container_status_app_dir, os.environ.get('upload_dir'))
+    UPLOAD_FOLDER = os.path.join('container_status_app', os.environ.get('upload_dir'))
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # INFO: 16MB upload size maximum
 
 
