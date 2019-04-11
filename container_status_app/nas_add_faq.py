@@ -143,7 +143,7 @@ class NasAddFaq(MethodView):
         :return:
         """
 
-        question_keywords = ['Question', 'QUESION', 'question']
+        question_keywords = ['Question', 'QUESTION', 'question']
         answer_keywords = ['Answer', 'answer', 'ANSWER']
 
         file = request.files.get('faq_file')
