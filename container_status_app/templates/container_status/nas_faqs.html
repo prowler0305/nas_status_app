@@ -39,7 +39,7 @@
                         <div id="{{ faq_type_key }}FAQ" class="collapse" aria-labelledby="{{ faq_type_key }}FAQheading" data-parent="#{{ faq_type_key }}FAQaccordion">
                             <div class="card-body">
                                 <div class="card">
-                                    <div class="card-header bg-light">{{ faq_title }}</div>
+                                    <div class="card-header bg-dark text-white">{{ faq_title }}</div>
                                     <div class="card-body">
                                         {% if faq_content is iterable and faq_content is not string %}
                                             {% for line in faq_content %}
