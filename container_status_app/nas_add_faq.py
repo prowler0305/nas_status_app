@@ -1,6 +1,7 @@
 # Flask
 from flask import render_template, request
 from flask.views import MethodView
+from werkzeug.utils import secure_filename
 
 # container status specific
 from container_status_app.common.common import Common
@@ -16,6 +17,7 @@ class NasAddFaq(MethodView):
 
         self.nas_add_faq_html_template = 'container_status/nas_add_faq.html'
         self.faq_dict = OrderedDict()
+        self.allowed_extensions = set(['txt'])
 
     def get(self):
         """
@@ -50,6 +52,9 @@ class NasAddFaq(MethodView):
                     else:
                         return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_selected=False)
             else:
+                if 'faq_file' in request.files:
+                    if self.process_faq_file():
+                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict)
                 faq_category_dicts = self.faq_dict.get(request.form.get('faq_type_radio'))
                 if "\r\n" in request.form.get('faq_content'):
                     faq_content_data = request.form.get('faq_content').split("\r\n")
@@ -110,3 +115,20 @@ class NasAddFaq(MethodView):
             return True
         else:
             return False
+
+    def allowed_file_types(self, filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in self.allowed_extensions
+
+    def process_faq_file(self):
+        """
+
+        :return:
+        """
+
+        file = request.files.get('faq_file')
+        if file.filename == '':
+            return False
+        if file and self.allowed_file_types(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
+            return True
