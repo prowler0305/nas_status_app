@@ -57,6 +57,18 @@
                             Automation Team
                         </div>
                     {% endif %}
+                {% else %}
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if message %}
+                                    <div class="alert alert-danger" role="alertdialog">
+                                        {{ message }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
                 {% endif %}
             </div>
         </div>

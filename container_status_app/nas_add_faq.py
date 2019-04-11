@@ -64,6 +64,10 @@ class NasAddFaq(MethodView):
                                                faq_added_rc=False)
 
                 faq_category_dicts = self.faq_dict.get(request.form.get('faq_type_radio'))
+                if request.form.get('faq_question') == '' and request.form.get('faq_content') == '':
+                    error_message = "Please fill in the Question and Answer form or select a file to be uploaded"
+                    Common.create_flash_message(error_message, 'error')
+                    return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict)
                 if "\r\n" in request.form.get('faq_content'):
                     faq_content_data = request.form.get('faq_content').split("\r\n")
                 else:
@@ -80,7 +84,7 @@ class NasAddFaq(MethodView):
                 else:
                     container_status_app.logger.error("Unable to add to Category: {} | FAQ: {} | Content: {}".format(
                         request.form.get('faq_type_radio'), request.form.get('faq_question'), request.form.get('faq_content')))
-                    return render_template(self.nas_add_faq_html_template, faq_added_rc=False)
+                    return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_added_rc=False)
         else:
             container_status_app.logger.error("Unable to read JSON file containing FAQ data at path: {}".format(os.environ.get('faq_data_path')))
             return render_template(self.nas_add_faq_html_template, faq_added_rc=False)
@@ -151,11 +155,21 @@ class NasAddFaq(MethodView):
             current_question = None
             for line in file:
                 if line.decode('utf-8').split(':', 1)[0] in question_keywords:
-                    faq_category_dicts[line.decode('utf-8').split(':', 1)[1]] = None
-                    current_question = line.decode('utf-8').split(':', 1)[1]
-
-                if line.decode('utf-8').split(':', 1)[0] in answer_keywords:
-                    faq_category_dicts[current_question] = line.decode('utf-8').split(':', 1)[1]
+                    faq_category_dicts[(line.decode('utf-8').split(':', 1)[1]).rstrip()] = None
+                    current_question = line.decode('utf-8').split(':', 1)[1].rstrip()
+                elif line.decode('utf-8').split(':', 1)[0] in answer_keywords:
+                    if "\n" in line.decode('utf-8').split(':', 1)[1]:
+                        faq_category_dicts[current_question] = (line.decode('utf-8').split(':', 1)[1]).rstrip("\n")
+                    else:
+                        faq_category_dicts[current_question] = line.decode('utf-8').split(':', 1)[1]
+                else:  # Have to assume the current read line is part of a answer that has multiple lines for the output
+                    current_answer = faq_category_dicts.get(current_question)
+                    if not isinstance(current_answer, list):
+                        temp_list = [current_answer, line.decode('utf-8').rstrip()]
+                        faq_category_dicts[current_question] = temp_list
+                    else:
+                        current_answer.append(line.decode('utf-8').rstrip())
+                        faq_category_dicts[current_question] = current_answer
 
             self.faq_dict[request.form.get('faq_type_radio')] = faq_category_dicts
             update_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('faq_data_path'),
