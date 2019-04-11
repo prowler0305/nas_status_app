@@ -12,8 +12,9 @@ from container_status_app.nas_faqs import NasFaqs
 from container_status_app.nas_add_faq import NasAddFaq
 from container_status_app.services.set_config_maps import SetConfigMaps
 
-if 'container-status-app' in os.environ.get('hostname'.upper()):
-    SetConfigMaps()
+if os.environ.get('hostname'.upper()) is not None:
+    if 'container-status-app' in os.environ.get('hostname'.upper()):
+        SetConfigMaps()
 
 container_status_view = ContainerStatus.as_view(name='container_status')
 # update_container_view = UpdateContainer.as_view(name='update_container')
