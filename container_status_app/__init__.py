@@ -24,6 +24,7 @@ add_faq = NasAddFaq.as_view(name='add_faq')
 
 # container_status_app.add_url_rule('/cstatus', view_func=container_status_view, methods=['GET'])
 container_status_app.add_url_rule('/nas_status', view_func=container_status_view, methods=['GET', 'POST'])
+container_status_app.add_url_rule('/', view_func=container_status_view, methods=['GET', 'POST'])
 container_status_app.add_url_rule('/nas_notify', view_func=generate_nas_notifications, methods=['GET', 'POST'])
 container_status_app.add_url_rule('/nas_faqs', view_func=faqs, methods={'GET'})
 container_status_app.add_url_rule('/nas/add/faq', view_func=add_faq, methods={'GET', 'POST'})

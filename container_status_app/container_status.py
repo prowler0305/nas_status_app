@@ -31,7 +31,7 @@ class ContainerStatus(MethodView):
             return render_template(self.nas_production_html_template, status_file_err=True)
         read_json_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
         if read_json_rc:
-            if request.url_rule.rule == '/nas_status':
+            if request.url_rule.rule == '/nas_status' or request.url_rule.rule == '/':
                 if 'nas_production' in self.container_status_dict:
                     if os.environ.get('notify_emails_path') is not None and os.environ.get('notify_emails_path') != '':
                         read_email_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
