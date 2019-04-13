@@ -19,9 +19,9 @@ class SetConfigMaps(object):
     """
     def __init__(self):
         self.config_mapper = dict()
+        self.logger = logging.getLogger('container_status_app')
         self._create_config_mapper()
         self._container_status_config(self.config_mapper)
-        self.logger = logging.getLogger('container_status_app')
 
     def _create_config_mapper(self):
         """
