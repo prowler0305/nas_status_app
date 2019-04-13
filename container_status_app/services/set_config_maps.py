@@ -1,7 +1,7 @@
 import os
 import json
 from shutil import copyfile
-from container_status_app import container_status_app
+import logging
 
 
 class SetConfigMaps(object):
@@ -21,6 +21,7 @@ class SetConfigMaps(object):
         self.config_mapper = dict()
         self._create_config_mapper()
         self._container_status_config(self.config_mapper)
+        self.logger = logging.getLogger('container_status_app')
 
     def _create_config_mapper(self):
         """
@@ -46,10 +47,10 @@ class SetConfigMaps(object):
             if os.path.exists(config_map_file_path):
                 if os.path.exists(persistent_storage_path):
                     copied_to = copyfile(src=config_map_file_path, dst=persistent_storage_path)
-                    container_status_app.logger.info("Source file {} copied to {}.".format(config_map_file_path, copied_to))
+                    self.logger.info("Source file {} copied to {}.".format(config_map_file_path, copied_to))
                 else:
-                    container_status_app.logger.error(file_path_error_message.format(persistent_storage_path))
+                    self.logger.error(file_path_error_message.format(persistent_storage_path))
             else:
-                container_status_app.logger.error(file_path_error_message.format(config_map_file_path))
+                self.logger.error(file_path_error_message.format(config_map_file_path))
 
         return

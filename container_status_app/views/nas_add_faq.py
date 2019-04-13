@@ -5,11 +5,11 @@ from werkzeug.utils import secure_filename
 
 # container status specific
 from container_status_app.common.common import Common
-from container_status_app import container_status_app
 
 # Misc
 import os
 from collections import OrderedDict
+import logging
 
 
 class NasAddFaq(MethodView):
@@ -18,6 +18,7 @@ class NasAddFaq(MethodView):
         self.nas_add_faq_html_template = 'container_status/nas_add_faq.html'
         self.faq_dict = OrderedDict()
         self.allowed_extensions = set(['txt'])
+        self.logger = logging.getLogger('container_status_app')
 
     def get(self):
         """
@@ -26,13 +27,13 @@ class NasAddFaq(MethodView):
         """
 
         if os.environ.get('faq_data_path') is None or os.environ.get('faq_data_path') == '':
-            container_status_app.logger.error("Environment variable 'faq_data_path' not defined.")
+            self.logger.error("Environment variable 'faq_data_path' not defined.")
             return render_template(self.nas_faq_html_template, faq_file_err=True)
         read_json_rc, self.faq_dict = Common.rw_json_file(file_path=os.environ.get('faq_data_path'))
         if read_json_rc:
             return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict)
         else:
-            container_status_app.logger.error("FAQ data file could not be read at location {}".format(os.environ.get('faq_data_path')))
+            self.logger.error("FAQ data file could not be read at location {}".format(os.environ.get('faq_data_path')))
             return render_template(self.nas_add_faq_html_template, faq_file_err=True)
 
     def post(self):
@@ -78,15 +79,15 @@ class NasAddFaq(MethodView):
                                                                    mode='write',
                                                                    output_dict=self.faq_dict)
                 if update_json_rc:
-                    container_status_app.logger.info("New FAQ: {} | Category: {} | Content: {}".format(
+                    self.logger.info("New FAQ: {} | Category: {} | Content: {}".format(
                         request.form.get('faq_question'), request.form.get('faq_type_radio'), request.form.get('faq_content')))
                     return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_added_rc=True)
                 else:
-                    container_status_app.logger.error("Unable to add to Category: {} | FAQ: {} | Content: {}".format(
+                    self.logger.error("Unable to add to Category: {} | FAQ: {} | Content: {}".format(
                         request.form.get('faq_type_radio'), request.form.get('faq_question'), request.form.get('faq_content')))
                     return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_added_rc=False)
         else:
-            container_status_app.logger.error("Unable to read JSON file containing FAQ data at path: {}".format(os.environ.get('faq_data_path')))
+            self.logger.error("Unable to read JSON file containing FAQ data at path: {}".format(os.environ.get('faq_data_path')))
             return render_template(self.nas_add_faq_html_template, faq_added_rc=False)
 
     def delete(self):
@@ -105,11 +106,11 @@ class NasAddFaq(MethodView):
                 faq_delete_metadata_list = faq_to_delete_key.split(':')
                 category_faq_dict = self.faq_dict.get(faq_delete_metadata_list[0])
                 if category_faq_dict.pop(faq_to_delete_value, None) is not None:
-                    container_status_app.logger.info("FAQ {} in Category {} has been deleted.".format(
+                    self.logger.info("FAQ {} in Category {} has been deleted.".format(
                         faq_to_delete_value, faq_delete_metadata_list[0].upper()))
                     faqs_deleted = True
                 else:
-                    container_status_app.logger.warning("FAQ {} in Category {} not found.".format(
+                    self.logger.warning("FAQ {} in Category {} not found.".format(
                         faq_to_delete_value, faq_delete_metadata_list[0].upper()))
                     faqs_deleted = False
 
@@ -117,9 +118,9 @@ class NasAddFaq(MethodView):
                                                            mode='write',
                                                            output_dict=self.faq_dict)
         if update_json_rc:
-            container_status_app.logger.info("FAQ data file {} updated successfully.".format(os.environ.get('faq_data_path')))
+            self.logger.info("FAQ data file {} updated successfully.".format(os.environ.get('faq_data_path')))
         else:
-            container_status_app.logger.error("FAQ data file {} could not be updated.".format(os.environ.get('faq_data_path')))
+            self.logger.error("FAQ data file {} could not be updated.".format(os.environ.get('faq_data_path')))
             if faqs_deleted:
                 faqs_deleted = False
 
@@ -176,9 +177,9 @@ class NasAddFaq(MethodView):
                                                                mode='write',
                                                                output_dict=self.faq_dict)
             if update_json_rc:
-                container_status_app.logger.info("FAQ Category: {} updated".format(request.form.get('faq_type_radio').upper()))
+                self.logger.info("FAQ Category: {} updated".format(request.form.get('faq_type_radio').upper()))
                 return True
             else:
-                container_status_app.logger.error("Unable to add to FAQ Category: {}".format(request.form.get('faq_type_radio').upper()))
+                self.logger.error("Unable to add to FAQ Category: {}".format(request.form.get('faq_type_radio').upper()))
                 return False
             # file.save(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))

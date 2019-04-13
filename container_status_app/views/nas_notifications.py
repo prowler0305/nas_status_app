@@ -4,12 +4,12 @@ from flask.views import MethodView
 
 # container status specific
 from container_status_app.common.common import Common
-from container_status_app import container_status_app
+from container_status_app.services.email import EmailServices
 
 # Misc
 import os
 import shutil
-from container_status_app.services.email import EmailServices
+import logging
 
 
 class NasNotifications(MethodView):
@@ -21,6 +21,7 @@ class NasNotifications(MethodView):
         self.notify_email_dict = None
         self.email_template_temp_file = os.environ.get('scratch_dir') + '/copy_nas_outage_email'
         self.container_status_dict = None
+        self.logger = logging.getLogger('container_status_app')
 
     def get(self):
         """
@@ -101,9 +102,9 @@ class NasNotifications(MethodView):
                     email_sent = email.send_email(email_fh.read())
                 email_sent_message = "Outage notification email {}"
                 if email_sent:
-                    container_status_app.logger.info(email_sent_message.format('sent'))
+                    self.logger.info(email_sent_message.format('sent'))
                 else:
-                    container_status_app.logger.error(email_sent_message.format('not sent'))
+                    self.logger.error(email_sent_message.format('not sent'))
 
                 if read_json_rc and nas_production_dict is not None:
                     if request.form.get('platform_name') == 'old_platform':
@@ -119,9 +120,9 @@ class NasNotifications(MethodView):
                     write_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('container_status_path'),
                                                                       mode='write',
                                                                       output_dict=self.container_status_dict)
-                    container_status_app.logger.info("Container status JSON file updated successfully: {}".format(file_updated))
+                    self.logger.info("Container status JSON file updated successfully: {}".format(file_updated))
                 else:
-                    container_status_app.logger.error("File path {} for container status JSON data could not be updated"
+                    self.logger.error("File path {} for container status JSON data could not be updated"
                                                       .format(os.environ.get('container_status_path')))
 
                     return render_template(self.nas_notify_html_template,
@@ -166,9 +167,9 @@ class NasNotifications(MethodView):
                 update_log_message = "{} update of container status JSON file. Path: {}".format(
                     'Successful' if update_json_rc else 'Unsuccessful', file_updated)
                 if update_json_rc:
-                    container_status_app.logger.info(update_log_message)
+                    self.logger.info(update_log_message)
                 else:
-                    container_status_app.logger.error(update_log_message)
+                    self.logger.error(update_log_message)
         return
 
     def put_p2(self, list_o_switch_name):
@@ -207,9 +208,9 @@ class NasNotifications(MethodView):
                 update_log_message = "{} update of container status JSON file. Path: {}".format(
                     'Successful' if update_json_rc else 'Unsuccessful', file_updated)
                 if update_json_rc:
-                    container_status_app.logger.info(update_log_message)
+                    self.logger.info(update_log_message)
                 else:
-                    container_status_app.logger.error(update_log_message)
+                    self.logger.error(update_log_message)
         return
 
     @staticmethod
