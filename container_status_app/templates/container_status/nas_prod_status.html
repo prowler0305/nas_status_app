@@ -201,11 +201,24 @@
                         <div class="card-body">
                             <small class="text-muted">Can search for an email address using the browser "Find". Usually activated using the keyboard shortcut "Ctl+F"</small>
                             {% if list_registered_emails is defined %}
-                                <ul class="list-group">
-                                    {% for email in list_registered_emails %}
-                                        <li class="list-group-item">{{ email }}</li>
-                                    {% endfor %}
-                                </ul>
+                                {{ list_registered_emails|length }}
+                                {% if list_registered_emails|length > 10 %}
+                                    <div class="row">
+                                        {% for email in list_registered_emails %}
+                                            <div class="col p-1">
+                                                <ul class="list-group">
+                                                    <li class="list-group-item">{{ email }}</li>
+                                                </ul>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <ul class="list-group">
+                                        {% for email in list_registered_emails %}
+                                            <li class="list-group-item">{{ email }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
                             {% else %}
                                 <div class="alert alert-danger" role="alert">Internal Error: Current list of registered emails couldn't be retrieved please contact SA3 Core
                                     Automation Team</div>
