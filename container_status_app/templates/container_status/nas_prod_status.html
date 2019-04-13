@@ -1,22 +1,6 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-<head>
-    <meta charset="UTF-8">
-{#    <meta http-equiv="refresh" content="10">#}
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- BootStrap CSS -->
-    <link rel="stylesheet" media="screen" href={{ url_for('static', filename='bootstrap.min.css') }}>
-    <title>NAS Platform Status</title>
-</head>
+{% extends 'container_status/base.html' %}
 <body>
-    <!-- Image and text -->
-    <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">
-            <img src="{{ url_for('static', filename='usc_logo.jpg') }}" width="30" class="d-inline-block align-top" alt="U.S. Cellular Logo">
-            NAS Platform Status
-        </a>
-    </nav>
+{% block content %}
     {% if status_file_err is defined and status_file_err is sameas True %}
         <div class="alert alert-danger" role="alert">
             Internal Server Error. Please report this issue to the SA3 Core Automation Team.
@@ -279,10 +263,5 @@
             </div>
         {% endif %}
     {% endif %}
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="../../static/bootstrap.min.js"></script>
+{% endblock content %}
 </body>
-</html>
