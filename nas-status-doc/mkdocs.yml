@@ -1,0 +1,36 @@
+# Project information
+site_name: NAS Status Web App Site Docs
+site_author: "Andrew Spear"
+
+#Repository
+repo_name: 'uscc-engineering/nas_container_status_app'
+repo_url: 'https://ilscha03-github-01.uscc.com/uscc-engineering/nas_container_status_app'
+
+#Configuration
+theme:
+  name: 'material'
+  palette:
+    primary: 'red'
+    accent: 'indigo'
+  logo: 'images/uscc_logo.jpg'
+  favicon: 'images/uscc_logo.jpg'
+
+#Extensions
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.magiclink
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.mark
+  - pymdownx.inlinehilite
+  - toc:
+      toc_depth: 2
+
+nav:
+  - Home: index.md
+  - Maintain Status: maintain_status.md
+  - Add FAQs: maintain_faqs.md
