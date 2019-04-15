@@ -61,10 +61,13 @@
                                             <h5 class="card-header bg-success text-white">Available</h5>
                                             <div class="card-body">
                                                 {% if cs.overall_status == 'ACTIVE' %}
+                                                    {% set nas_url= 'https://network-automation-services.engapps.uscc.com' %}
                                                     <ul class="list-group">
                                                         {% for application, app_status in cs.applications.items() %}
                                                             {% if app_status.status == 'ACTIVE' %}
-                                                                <li class="list-group-item list-group-item-{{ app_status.coloring }}">{{application}}</li>
+                                                                <li class="list-group-item list-group-item-{{ app_status.coloring }}">
+                                                                    <a href="{{ nas_url }}">{{application}}</a>
+                                                                </li>
                                                             {% endif %}
                                                         {% endfor %}
                                                     </ul>
@@ -112,10 +115,13 @@
                                             <h5 class="card-header bg-success text-white">Available</h5>
                                             <div class="card-body">
                                                 {% if cs.p2_overall_status == 'ACTIVE' %}
+                                                    {% set nas2_url = 'https://network-automation-services-platform.engapps.uscc.com' %}
                                                     <ul class="list-group">
                                                         {% for application, app_status in cs.new_platform_apps.items() %}
                                                             {% if app_status.status == 'ACTIVE' %}
-                                                                <li class="list-group-item list-group-item-{{ app_status.coloring }}">{{application}}</li>
+                                                                <li class="list-group-item list-group-item-{{ app_status.coloring }}">
+                                                                    <a href="{{ nas2_url }}">{{application}}</a>
+                                                                </li>
                                                             {% endif %}
                                                         {% endfor %}
                                                     </ul>
