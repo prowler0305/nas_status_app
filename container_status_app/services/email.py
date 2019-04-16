@@ -1,9 +1,10 @@
 import smtplib
+import logging
 from email.message import EmailMessage
 
 
 class EmailServices(object):
-    def __init__(self, subject, from_address, to_address, app_instance=None):
+    def __init__(self, subject, from_address, to_address):
         """
         Encapsulates ability to send email using USCC mail server
         """
@@ -13,7 +14,7 @@ class EmailServices(object):
         self.subject = subject
         self.from_address = from_address
         self.to_address = to_address
-        self.app_name = app_instance
+        self._logger = logging.getLogger('container_status_app')
 
     def send_email(self, email_content: str, subject=None, from_address=None, to_address=None):
         """
@@ -41,5 +42,5 @@ class EmailServices(object):
         if len(send_resp) == 0:
             return True
         else:
-            self.app_name.logger.error(str(send_resp))
+            self._logger.error(str(send_resp))
             return False
