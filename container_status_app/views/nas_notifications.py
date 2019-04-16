@@ -63,8 +63,9 @@ class NasNotifications(MethodView):
                     app_toggle_info_tuple = (status_switch_name, additional_info_name)
                     toggle_switch_names.append(app_toggle_info_tuple)
                     self.put_p2(list_o_switch_name=toggle_switch_names)
-
         else:
+            if 'nas_notify_form' in list(request.form.keys()):
+                self.send_email_notification()
             if 'Choose' in request.form.get('time_of_day_start'):
                 return render_template(self.nas_notify_html_template, tods_error=True)
             elif 'Choose' in request.form.get('time_of_day_end'):
@@ -96,7 +97,7 @@ class NasNotifications(MethodView):
             if read_notify_email_file_rc:
                 email = EmailServices(subject=self.nas_down_email.get('subject').format(request.form.get('outage_start_date')),
                                       from_address=self.nas_down_email.get('from_addr'),
-                                      to_address=self.notify_email_dict.get('email_address_list'), app_instance=container_status_app)
+                                      to_address=self.notify_email_dict.get('email_address_list'))
 
                 with open(self.email_template_temp_file) as email_fh:
                     email_sent = email.send_email(email_fh.read())
@@ -130,6 +131,14 @@ class NasNotifications(MethodView):
 
         return render_template(self.nas_notify_html_template,
                                nas_prod_status_data=self.container_status_dict.get('nas_production'))
+
+    def send_email_notification(self):
+        """
+
+        :return:
+        """
+
+        pass
 
     def put(self, list_o_switch_name):
         """

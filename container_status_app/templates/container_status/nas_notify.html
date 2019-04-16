@@ -8,9 +8,9 @@
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-6">
                 <div class="card">
-                    <h5 class="card-header bg-info">NAS Platform Outage</h5>
+                    <h5 class="card-header bg-info">NAS Platform Outage Notification</h5>
                     <div class="card-body">
                         <p>Use the form below to generate an outage email to all registered users of the NAS Platform Status
                             application. Submitting this form will also update the overall status for the NAS Platform displayed
@@ -85,12 +85,43 @@
                                     updated manually.
                                 </div>
                             {% endif %}
-                            <button type="submit" name="nas_outage_form" class="btn btn-primary mt-2">Submit</button>
+                            <button type="submit" name="nas_outage_form" class="btn btn-outline-info mt-2">Submit</button>
                         </form>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-6">
+                <div class="card">
+                    <h5 class="card-header bg-primary">Send Email Notification</h5>
+                    <div class="card-body">
+                        <p>
+                            Use the form below to send out a non platform outage notification to all the registered email addresses.
+                        </p>
+                        <form method="POST" autocomplete="off">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <label for="fromEmailAddr"></label>
+                                    <input type="text" class="form-control" placeholder="Enter From email address" name="from_email_addr">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="fromEmailAddr">@uscellular.com</span>
+                                    </div>
+                                </div>
+                                <small>Defaults to SA3CoreAutomationTeam@noreply.com</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="emailContent">Email Content</label>
+                                <textarea class="form-control" name="email_content" id="emailContent" rows="10"></textarea>
+                            </div>
+                            <button type="submit" name="nas_notify_form" class="btn btn-outline-primary mt-2">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
                 <div class="card">
                     <div class="card-header">
                         <ul class="nav nav-pills card-header-tabs" id="oldArchTab" role="tablist">
