@@ -8,7 +8,7 @@
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-6">
+            <div class="col">
                 <div class="card">
                     <h5 class="card-header bg-info">NAS Platform Outage Notification</h5>
                     <div class="card-body">
@@ -90,30 +90,53 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6">
+            <div class="col">
                 <div class="card">
                     <h5 class="card-header bg-primary">Send Email Notification</h5>
                     <div class="card-body">
                         <p>
                             Use the form below to send out a non platform outage notification to all the registered email addresses.
                         </p>
-                        <form method="POST" autocomplete="off">
+                        <form class="was-validated" method="POST" autocomplete="off">
                             <div class="form-group">
+                                <label for="fromEmailAddr"></label>
                                 <div class="input-group">
-                                    <label for="fromEmailAddr"></label>
-                                    <input type="text" class="form-control" placeholder="Enter From email address" name="from_email_addr">
-                                    <div class="input-group-append">
+                                    <div class="input-group-append flex-wrap">
+                                        <input type="text" class="form-control w-auto is-invalid" placeholder="Enter From email address" name="from_email_addr" aria-describedby="fromEmail-addon">
                                         <span class="input-group-text" id="fromEmailAddr">@uscellular.com</span>
+                                        <div class="valid-tooltip">Enter an email address or defaults to SA3CoreAutomationTeam@noreply.com.</div>
                                     </div>
                                 </div>
-                                <small>Defaults to SA3CoreAutomationTeam@noreply.com</small>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group position-relative mt-5">
+                                <label for="emailSubject"></label>
+                                <input type="text" class="form-control" placeholder="Subject:" name="email_subject" required>
+                                <div class="invalid-tooltip">Please provide a Subject.</div>
+                            </div>
+                            <div class="form-group position-relative mt-5 mb-5">
                                 <label for="emailContent">Email Content</label>
-                                <textarea class="form-control" name="email_content" id="emailContent" rows="10"></textarea>
+                                <textarea class="form-control is-invalid" name="email_content" id="emailContent" rows="10" required></textarea>
+                                <div class="invalid-tooltip">
+                                    Please provide content for email body.
+                                </div>
                             </div>
                             <button type="submit" name="nas_notify_form" class="btn btn-outline-primary mt-2">Submit</button>
                         </form>
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if 'Error' in message %}
+                                        <div class="alert alert-danger" role="alertdialog">
+                                            {{ message }}
+                                        </div>
+                                    {% else %}
+                                        <div class="alert alert-success" role="alertdialog">
+                                            {{ message }}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>

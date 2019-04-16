@@ -15,8 +15,9 @@ import logging
 class NasNotifications(MethodView):
     def __init__(self):
 
+        self.default_from_email_addr = 'SA3CoreAutomationTeam@noreply.com'
         self.nas_down_email = dict(subject='Critical Bulletin - NAS Automation Platform Outage - Date: {}',
-                                   from_addr='SA3CoreAutomationTeam@noreply.com')
+                                   from_addr=self.default_from_email_addr)
         self.nas_notify_html_template = 'container_status/nas_notify.html'
         self.notify_email_dict = None
         self.email_template_temp_file = os.environ.get('scratch_dir') + '/copy_nas_outage_email'
@@ -65,7 +66,15 @@ class NasNotifications(MethodView):
                     self.put_p2(list_o_switch_name=toggle_switch_names)
         else:
             if 'nas_notify_form' in list(request.form.keys()):
-                self.send_email_notification()
+                if self.send_email_notification():
+                    Common.create_flash_message("Email sent Successfully", category_request='info')
+                else:
+                    Common.create_flash_message("Error sending email. Please Contact SA3 Core Automation Team.",
+                                                category_request='error')
+
+                return render_template(self.nas_notify_html_template,
+                                       nas_prod_status_data=self.container_status_dict.get('nas_production'))
+
             if 'Choose' in request.form.get('time_of_day_start'):
                 return render_template(self.nas_notify_html_template, tods_error=True)
             elif 'Choose' in request.form.get('time_of_day_end'):
@@ -137,8 +146,27 @@ class NasNotifications(MethodView):
 
         :return:
         """
+        email_sent_message = "Notification email {}"
+        read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
+        if read_notify_email_file_rc:
+            if request.form.get('from_email_addr') is None or request.form.get('from_email_addr') == '':
+                send_from = self.default_from_email_addr
+            else:
+                send_from = request.form.get('from_email_addr').strip() + '@uscellular.com'
+            email = EmailServices(subject=request.form.get('email_subject'),
+                                  from_address=send_from,
+                                  to_address=self.notify_email_dict.get('email_address_list'))
 
-        pass
+            email_sent = email.send_email(request.form.get('email_content'))
+            if email_sent:
+                self.logger.info(email_sent_message.format('sent'))
+                return True
+            else:
+                self.logger.error(email_sent_message.format('not sent'))
+                return False
+        else:
+            self.logger.error(email_sent_message.format('not sent. List of registered emails could not be retrieved.'))
+            return False
 
     def put(self, list_o_switch_name):
         """
