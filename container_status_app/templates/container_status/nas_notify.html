@@ -97,7 +97,7 @@
                         <p>
                             Use the form below to send out a non platform outage notification to all the registered email addresses.
                         </p>
-                        <form class="was-validated" method="POST" autocomplete="off">
+                        <form class="was-validated" method="POST" autocomplete="off" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="fromEmailAddr"></label>
                                 <div class="input-group">
@@ -118,6 +118,17 @@
                                 <textarea class="form-control is-invalid" name="email_content" id="emailContent" rows="10" required></textarea>
                                 <div class="invalid-tooltip">
                                     Please provide content for email body.
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="uploadText-addon">Upload</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input w-25" id="uploadEmailFile" name="attachment_file" aria-describedby="uploadEmailAddon">
+                                        <label class="custom-file-label" for="uploadEmailFile">Choose File</label>
+                                    </div>
                                 </div>
                             </div>
                             <button type="submit" name="nas_notify_form" class="btn btn-outline-primary mt-2">Submit</button>

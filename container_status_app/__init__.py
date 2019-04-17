@@ -6,10 +6,12 @@ from container_status_app.views.nas_notifications import NasNotifications
 from container_status_app.views.nas_faqs import NasFaqs
 from container_status_app.views.nas_add_faq import NasAddFaq
 from container_status_app.services.set_config_maps import SetConfigMaps
+from flask_mail import Mail
 
 container_status_app = Flask(__name__)
 container_status_app.config.from_object(os.environ.get('app_env'))
 api = Api(container_status_app, prefix='/v1')
+mail = Mail(container_status_app)
 
 if os.environ.get('hostname'.upper()) is not None:
     if 'container-status-app' in os.environ.get('hostname'.upper()):

@@ -26,6 +26,12 @@ class DevelopmentConfig(BaseConfig):
     PORT = 5000 if os.environ.get("PORT") is None else int(os.environ.get("PORT"))
     HOST = os.environ.get('HOST') or 'localhost'
     PREFERRED_URL_SCHEME = 'http'
+    MAIL_SERVER = 'smtp-mail.outlook.com'
+    MAIL_PORT = 587
+    MAIL_USERNAME = os.environ.get('mail_username')
+    MAIL_PASSWORD = os.environ.get('mail_password')
+    MAIL_USE_TLS = True
+
     if os.environ.get('access_token_expiration') is not None:
         JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(seconds=int(os.environ.get('access_token_expiration')))
     if os.environ.get('refresh_token_expiration') is not None:

@@ -1,8 +1,10 @@
 # Flask
 from flask import render_template, request
 from flask.views import MethodView
+from werkzeug.utils import secure_filename
 
 # container status specific
+from flask import current_app as container_status_app
 from container_status_app.common.common import Common
 from container_status_app.services.email import EmailServices
 
@@ -149,15 +151,21 @@ class NasNotifications(MethodView):
         email_sent_message = "Notification email {}"
         read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
         if read_notify_email_file_rc:
+            file = request.files.get('attachment_file')
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
             if request.form.get('from_email_addr') is None or request.form.get('from_email_addr') == '':
                 send_from = self.default_from_email_addr
             else:
                 send_from = request.form.get('from_email_addr').strip() + '@uscellular.com'
+
             email = EmailServices(subject=request.form.get('email_subject'),
                                   from_address=send_from,
                                   to_address=self.notify_email_dict.get('email_address_list'))
 
-            email_sent = email.send_email(request.form.get('email_content'))
+            # email_sent = email.send_email(request.form.get('email_content'))
+            email_sent = email.send_email(request.form.get('email_content'),
+                                          attachment=os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
             if email_sent:
                 self.logger.info(email_sent_message.format('sent'))
                 return True
