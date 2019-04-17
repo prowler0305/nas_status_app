@@ -42,14 +42,15 @@ class SetConfigMaps(object):
         """
 
         file_path_error_message = "Path {} doesn't exist."
+        file_path_info_message = "Path {} already exist."
 
         for config_map_file_path, persistent_storage_path in config_mapper_dict.items():
             if os.path.exists(config_map_file_path):
-                if os.path.exists(persistent_storage_path):
+                if not os.path.exists(persistent_storage_path):
                     copied_to = copyfile(src=config_map_file_path, dst=persistent_storage_path)
                     self.logger.info("Source file {} copied to {}.".format(config_map_file_path, copied_to))
                 else:
-                    self.logger.error(file_path_error_message.format(persistent_storage_path))
+                    self.logger.info(file_path_error_message.format(persistent_storage_path) + "No need for copy.")
             else:
                 self.logger.error(file_path_error_message.format(config_map_file_path))
 
