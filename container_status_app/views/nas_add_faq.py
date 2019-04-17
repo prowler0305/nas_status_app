@@ -11,7 +11,7 @@ from flask import current_app as container_status_app
 import os
 from collections import OrderedDict
 import logging
-import codecs
+import shutil
 
 
 class NasAddFaq(MethodView):
@@ -21,6 +21,7 @@ class NasAddFaq(MethodView):
         self.faq_dict = OrderedDict()
         self.allowed_extensions = set(['txt'])
         self.logger = logging.getLogger('container_status_app')
+        self.faq_backup_file = os.environ.get('scratch_dir') + '/backup_faq_data.json'
 
     def get(self):
         """
@@ -198,9 +199,19 @@ class NasAddFaq(MethodView):
                                                                mode='write',
                                                                output_dict=self.faq_dict)
             if update_json_rc:
+                # INFO: if the backup file doesn't exist yet then create it
+                if not os.path.exists(self.faq_backup_file):
+                    with open(self.faq_backup_file, mode='w+'):
+                        pass
+                shutil.copyfile(os.environ.get('faq_data_path'), self.faq_backup_file)
                 self.logger.info("FAQ Category: {} updated".format(request.form.get('faq_type_radio').upper()))
                 # os.remove(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
                 return True
             else:
+                # INFO: if a FAQ backup file exists then put the backup in place in case this file upload destroyed the
+                # INFO: the existing JSON file structure.
+                if os.path.exists(self.faq_backup_file):
+                    shutil.copyfile(self.faq_backup_file, os.environ.get('faq_data_path'))
                 self.logger.error("Unable to add to FAQ Category: {}".format(request.form.get('faq_type_radio').upper()))
+                reread_json_rc, self.faq_dict = Common.rw_json_file(os.environ.get('faq_data_path'))
                 return False
