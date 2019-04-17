@@ -108,14 +108,19 @@ class NasAddFaq(MethodView):
             else:
                 faq_delete_metadata_list = faq_to_delete_key.split(':')
                 category_faq_dict = self.faq_dict.get(faq_delete_metadata_list[0])
-                if category_faq_dict.pop(faq_to_delete_value, None) is not None:
-                    self.logger.info("FAQ {} in Category {} has been deleted.".format(
-                        faq_to_delete_value, faq_delete_metadata_list[0].upper()))
+                if faq_to_delete_value == 'ALL':
+                    category_faq_dict.clear()
+                    self.logger.info("All FAQs in Category {} have been deleted".format(faq_delete_metadata_list[0].upper()))
                     faqs_deleted = True
                 else:
-                    self.logger.warning("FAQ {} in Category {} not found.".format(
-                        faq_to_delete_value, faq_delete_metadata_list[0].upper()))
-                    faqs_deleted = False
+                    if category_faq_dict.pop(faq_to_delete_value, None) is not None:
+                        self.logger.info("FAQ {} in Category {} has been deleted.".format(
+                            faq_to_delete_value, faq_delete_metadata_list[0].upper()))
+                        faqs_deleted = True
+                    else:
+                        self.logger.warning("FAQ {} in Category {} not found.".format(
+                            faq_to_delete_value, faq_delete_metadata_list[0].upper()))
+                        faqs_deleted = False
 
         update_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('faq_data_path'),
                                                            mode='write',
