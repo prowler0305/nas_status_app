@@ -3,6 +3,7 @@ import os
 from flask import jsonify, flash, Response, json
 from flask_restful import reqparse
 from config import container_status_app_dir
+import traceback
 
 
 class Common(object):
@@ -199,8 +200,12 @@ class Common(object):
                 return False, None
 
         elif mode == 'write':
-            with open(file_path, mode='w') as jswfh:
-                json.dump(output_dict, jswfh)
-                return True, file_path
+            try:
+                with open(file_path, mode='w') as jswfh:
+                    json.dump(output_dict, jswfh)
+                    return True, file_path
+            except Exception:
+                traceback.print_exc()
+                return False, None
         else:
             return False, "Value for parameter 'mode' invalid. Expected 'read' or 'write'"
