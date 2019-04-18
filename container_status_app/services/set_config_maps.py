@@ -50,7 +50,7 @@ class SetConfigMaps(object):
                     copied_to = copyfile(src=config_map_file_path, dst=persistent_storage_path)
                     container_status_app.logger.info("Source file {} copied to {}.".format(config_map_file_path, copied_to))
                 else:
-                    container_status_app.logger.info(file_path_error_message.format(persistent_storage_path) + "No need for copy.")
+                    container_status_app.logger.info(file_path_info_message.format(persistent_storage_path) + "No need for copy.")
             else:
                 container_status_app.logger.error(file_path_error_message.format(config_map_file_path))
 
