@@ -1,4 +1,5 @@
 import os
+import logging
 from flask import Flask
 from flask_restful import Api
 from container_status_app.views.container_status import ContainerStatus
@@ -10,6 +11,13 @@ from container_status_app.services.set_config_maps import SetConfigMaps
 container_status_app = Flask(__name__)
 container_status_app.config.from_object(os.environ.get('app_env'))
 api = Api(container_status_app, prefix='/v1')
+
+
+@container_status_app.before_first_request
+def setup_logging():
+    if not container_status_app.debug:
+        container_status_app.logger.setLevel(logging.INFO)
+
 
 if os.environ.get('hostname'.upper()) is not None:
     if 'container-status-app' in os.environ.get('hostname'.upper()):

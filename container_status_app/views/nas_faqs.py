@@ -9,7 +9,6 @@ from flask import current_app as container_status_app
 # Misc
 import os
 from collections import OrderedDict
-import logging 
 
 
 class NasFaqs(MethodView):

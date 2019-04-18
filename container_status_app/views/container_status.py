@@ -8,7 +8,6 @@ from flask import current_app as container_status_app
 
 # Misc
 import os
-import logging
 
 
 class ContainerStatus(MethodView):
