@@ -86,7 +86,7 @@ class NasAddFaq(MethodView):
                     faq_content_data = request.form.get('faq_content')
                 faq_category_dicts[request.form.get('faq_question')] = faq_content_data
                 self.faq_dict[request.form.get('faq_type_radio')] = faq_category_dicts
-                update_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('faq_data_pah'),
+                update_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('faq_data_path'),
                                                                    mode='write',
                                                                    output_dict=self.faq_dict)
                 if update_json_rc:

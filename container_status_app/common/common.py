@@ -1,6 +1,6 @@
 import collections
 import os
-from flask import jsonify, flash, Response, json
+from flask import jsonify, flash, Response, json, current_app as container_status_app
 from flask_restful import reqparse
 from config import container_status_app_dir
 import traceback
@@ -204,8 +204,8 @@ class Common(object):
                 with open(file_path, mode='w') as jswfh:
                     json.dump(output_dict, jswfh)
                     return True, file_path
-            except Exception:
-                traceback.print_exc()
+            except Exception as err:
+                container_status_app.logger.exception(err)
                 return False, None
         else:
             return False, "Value for parameter 'mode' invalid. Expected 'read' or 'write'"
