@@ -13,7 +13,8 @@ api = Api(container_status_app, prefix='/v1')
 
 if os.environ.get('hostname'.upper()) is not None:
     if 'container-status-app' in os.environ.get('hostname'.upper()):
-        SetConfigMaps()
+        with container_status_app.app_context():
+            SetConfigMaps()
 
 container_status_view = ContainerStatus.as_view(name='container_status')
 # update_container_view = UpdateContainer.as_view(name='update_container')
