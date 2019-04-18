@@ -2,6 +2,7 @@ import os
 import json
 from shutil import copyfile
 import logging
+from flask import current_app as container_status_app
 
 
 class SetConfigMaps(object):
@@ -19,7 +20,6 @@ class SetConfigMaps(object):
     """
     def __init__(self):
         self.config_mapper = dict()
-        self.logger = logging.getLogger('container_status_app')
         self._create_config_mapper()
         self._container_status_config(self.config_mapper)
 
@@ -48,10 +48,10 @@ class SetConfigMaps(object):
             if os.path.exists(config_map_file_path):
                 if not os.path.exists(persistent_storage_path):
                     copied_to = copyfile(src=config_map_file_path, dst=persistent_storage_path)
-                    self.logger.info("Source file {} copied to {}.".format(config_map_file_path, copied_to))
+                    container_status_app.logger.info("Source file {} copied to {}.".format(config_map_file_path, copied_to))
                 else:
-                    self.logger.info(file_path_error_message.format(persistent_storage_path) + "No need for copy.")
+                    container_status_app.logger.info(file_path_error_message.format(persistent_storage_path) + "No need for copy.")
             else:
-                self.logger.error(file_path_error_message.format(config_map_file_path))
+                container_status_app.logger.error(file_path_error_message.format(config_map_file_path))
 
         return

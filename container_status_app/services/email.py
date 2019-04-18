@@ -1,6 +1,7 @@
 import smtplib
 import logging
 from email.message import EmailMessage
+from flask import current_app as container_status_app
 
 
 class EmailServices(object):
@@ -14,7 +15,6 @@ class EmailServices(object):
         self.subject = subject
         self.from_address = from_address
         self.to_address = to_address
-        self._logger = logging.getLogger('container_status_app')
 
     def send_email(self, email_content: str, subject=None, from_address=None, to_address=None):
         """
@@ -42,5 +42,5 @@ class EmailServices(object):
         if len(send_resp) == 0:
             return True
         else:
-            self._logger.error(str(send_resp))
+            container_status_app.logger.error(str(send_resp))
             return False

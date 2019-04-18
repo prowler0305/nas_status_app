@@ -20,7 +20,6 @@ class NasAddFaq(MethodView):
         self.nas_add_faq_html_template = 'container_status/nas_add_faq.html'
         self.faq_dict = OrderedDict()
         self.allowed_extensions = set(['txt'])
-        self.logger = logging.getLogger('container_status_app')
         self.faq_backup_file = os.environ.get('scratch_dir') + '/backup_faq_data.json'
 
     def get(self):
@@ -30,13 +29,13 @@ class NasAddFaq(MethodView):
         """
 
         if os.environ.get('faq_data_path') is None or os.environ.get('faq_data_path') == '':
-            self.logger.error("Environment variable 'faq_data_path' not defined.")
+            container_status_app.logger.error("Environment variable 'faq_data_path' not defined.")
             return render_template(self.nas_faq_html_template, faq_file_err=True)
         read_json_rc, self.faq_dict = Common.rw_json_file(file_path=os.environ.get('faq_data_path'))
         if read_json_rc:
             return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict)
         else:
-            self.logger.error("FAQ data file could not be read at location {}".format(os.environ.get('faq_data_path')))
+            container_status_app.logger.error("FAQ data file could not be read at location {}".format(os.environ.get('faq_data_path')))
             return render_template(self.nas_add_faq_html_template, faq_file_err=True)
 
     def post(self):
@@ -50,8 +49,13 @@ class NasAddFaq(MethodView):
             if 'deleteFAQButton' in request.form.keys():
                     if len(request.form) > 1:
                         if self.delete():
-                            return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
-                                                   faq_delete_rc=True)
+                            self.backup_faq_data()
+                            reread_json_rc, self.faq_dict = Common.rw_json_file(file_path=os.environ.get('faq_data_path'))
+                            if reread_json_rc:
+                                return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
+                                                       faq_delete_rc=True)
+                            else:
+                                return render_template(self.nas_add_faq_html_template, faq_file_err=True)
                         else:
                             return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
                                                    faq_delete_rc=False)
@@ -61,11 +65,16 @@ class NasAddFaq(MethodView):
             else:
                 if 'faq_file' in request.files:
                     if self.process_faq_file():
+                        self.backup_faq_data()
                         return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
                                                faq_added_rc=True)
                     else:
-                        return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
-                                               faq_added_rc=False)
+                        if self.backup_faq_data(restore=True):
+                            reread_json_rc, self.faq_dict = Common.rw_json_file(os.environ.get('faq_data_path'))
+                            return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict,
+                                                   faq_added_rc=False)
+                        else:
+                            return render_template(self.nas_add_faq_html_template, faq_file_err=True)
 
                 faq_category_dicts = self.faq_dict.get(request.form.get('faq_type_radio'))
                 if request.form.get('faq_question') == '' and request.form.get('faq_content') == '':
@@ -78,19 +87,21 @@ class NasAddFaq(MethodView):
                     faq_content_data = request.form.get('faq_content')
                 faq_category_dicts[request.form.get('faq_question')] = faq_content_data
                 self.faq_dict[request.form.get('faq_type_radio')] = faq_category_dicts
-                update_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('faq_data_path'),
+                update_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('faq_data_pah'),
                                                                    mode='write',
                                                                    output_dict=self.faq_dict)
                 if update_json_rc:
-                    self.logger.info("New FAQ: {} | Category: {} | Content: {}".format(
+                    container_status_app.logger.info("New FAQ: {} | Category: {} | Content: {}".format(
                         request.form.get('faq_question'), request.form.get('faq_type_radio'), request.form.get('faq_content')))
+                    self.backup_faq_data()
                     return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_added_rc=True)
                 else:
-                    self.logger.error("Unable to add to Category: {} | FAQ: {} | Content: {}".format(
+                    container_status_app.logger.error("Unable to add to Category: {} | FAQ: {} | Content: {}".format(
                         request.form.get('faq_type_radio'), request.form.get('faq_question'), request.form.get('faq_content')))
+                    _, self.faq_dict = Common.rw_json_file(os.environ.get('faq_data_path'))
                     return render_template(self.nas_add_faq_html_template, faq_dict=self.faq_dict, faq_added_rc=False)
         else:
-            self.logger.error("Unable to read JSON file containing FAQ data at path: {}".format(os.environ.get('faq_data_path')))
+            container_status_app.logger.error("Unable to read JSON file containing FAQ data at path: {}".format(os.environ.get('faq_data_path')))
             return render_template(self.nas_add_faq_html_template, faq_added_rc=False)
 
     def delete(self):
@@ -110,25 +121,24 @@ class NasAddFaq(MethodView):
                 category_faq_dict = self.faq_dict.get(faq_delete_metadata_list[0])
                 if faq_to_delete_value == 'ALL':
                     category_faq_dict.clear()
-                    self.logger.info("All FAQs in Category {} have been deleted".format(faq_delete_metadata_list[0].upper()))
+                    container_status_app.logger.info("All FAQs in Category {} have been deleted".format(faq_delete_metadata_list[0].upper()))
                     faqs_deleted = True
                 else:
                     if category_faq_dict.pop(faq_to_delete_value, None) is not None:
-                        self.logger.info("FAQ {} in Category {} has been deleted.".format(
+                        container_status_app.logger.info("FAQ {} in Category {} has been deleted.".format(
                             faq_to_delete_value, faq_delete_metadata_list[0].upper()))
                         faqs_deleted = True
                     else:
-                        self.logger.warning("FAQ {} in Category {} not found.".format(
+                        container_status_app.logger.warning("FAQ {} in Category {} not found.".format(
                             faq_to_delete_value, faq_delete_metadata_list[0].upper()))
-                        faqs_deleted = False
 
         update_json_rc, file_updated = Common.rw_json_file(file_path=os.environ.get('faq_data_path'),
                                                            mode='write',
                                                            output_dict=self.faq_dict)
         if update_json_rc:
-            self.logger.info("FAQ data file {} updated successfully.".format(os.environ.get('faq_data_path')))
+            container_status_app.logger.info("FAQ data file {} updated successfully.".format(os.environ.get('faq_data_path')))
         else:
-            self.logger.error("FAQ data file {} could not be updated.".format(os.environ.get('faq_data_path')))
+            container_status_app.logger.error("FAQ data file {} could not be updated.".format(os.environ.get('faq_data_path')))
             if faqs_deleted:
                 faqs_deleted = False
 
@@ -204,19 +214,35 @@ class NasAddFaq(MethodView):
                                                                mode='write',
                                                                output_dict=self.faq_dict)
             if update_json_rc:
-                # INFO: if the backup file doesn't exist yet then create it
-                if not os.path.exists(self.faq_backup_file):
-                    with open(self.faq_backup_file, mode='w+'):
-                        pass
-                shutil.copyfile(os.environ.get('faq_data_path'), self.faq_backup_file)
-                self.logger.info("FAQ Category: {} updated".format(request.form.get('faq_type_radio').upper()))
+                container_status_app.logger.info("FAQ Category: {} updated".format(request.form.get('faq_type_radio').upper()))
                 # os.remove(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
                 return True
             else:
-                # INFO: if a FAQ backup file exists then put the backup in place in case this file upload destroyed the
-                # INFO: the existing JSON file structure.
-                if os.path.exists(self.faq_backup_file):
-                    shutil.copyfile(self.faq_backup_file, os.environ.get('faq_data_path'))
-                self.logger.error("Unable to add to FAQ Category: {}".format(request.form.get('faq_type_radio').upper()))
-                reread_json_rc, self.faq_dict = Common.rw_json_file(os.environ.get('faq_data_path'))
+                container_status_app.logger.error("Unable to add to FAQ Category: {}".format(request.form.get('faq_type_radio').upper()))
                 return False
+
+    def backup_faq_data(self, restore: bool = False):
+        """
+        Backs up or restores the faq JSON data by copying the file to or from the backup file path indicated by the
+        class attribute faq_backup_file
+
+        :param restore:
+        :return:
+        """
+
+        if restore:
+            if os.path.exists(self.faq_backup_file):
+                shutil.copyfile(self.faq_backup_file, os.environ.get('faq_data_path'))
+                container_status_app.logger.info("FAQ data restored successfully from {}.".format(self.faq_backup_file))
+                return True
+            else:
+                container_status_app.logger.error("Backup file - {} - doesn't due to either path is incorrect or a backup file hasn't "
+                                  "been created yet.".format(self.faq_backup_file))
+                return False
+        else:
+            if not os.path.exists(self.faq_backup_file):
+                with open(self.faq_backup_file, mode='w+'):
+                    container_status_app.logger.info("Creating backup file location {}.".format(self.faq_backup_file))
+            shutil.copyfile(os.environ.get('faq_data_path'), self.faq_backup_file)
+            container_status_app.logger.info("FAQ Data backed up successfully to {}.".format(self.faq_backup_file))
+            return True

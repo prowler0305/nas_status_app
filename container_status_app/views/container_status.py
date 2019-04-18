@@ -4,6 +4,7 @@ from flask.views import MethodView
 
 # Container status app specific
 from container_status_app.common.common import Common
+from flask import current_app as container_status_app
 
 # Misc
 import os
@@ -20,7 +21,6 @@ class ContainerStatus(MethodView):
                                    to_addr='Andrew.Spear@uscellular.com',
                                    content='There will be an outage with the NAS Automation Platform on Saturday')
         self.nas_production_html_template = 'container_status/nas_prod_status.html'
-        self.logger = logging.getLogger('container_status_app')
 
     def get(self):
         """
@@ -28,7 +28,7 @@ class ContainerStatus(MethodView):
         :return: Renders the html page with all substituted content needed.
         """
         if os.environ.get('container_status_path') is None or os.environ.get('container_status_path') == '':
-            self.logger.error("Environment variable 'container_status_path' not defined.")
+            container_status_app.logger.error("Environment variable 'container_status_path' not defined.")
             return render_template(self.nas_production_html_template, status_file_err=True)
         read_json_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
         if read_json_rc:
@@ -44,7 +44,7 @@ class ContainerStatus(MethodView):
                             return render_template(self.nas_production_html_template,
                                                    cs=self.container_status_dict.get('nas_production'))
                     else:
-                        self.logger.error("Environment variable 'notify_emails_path' not defined")
+                        container_status_app.logger.error("Environment variable 'notify_emails_path' not defined")
                         return render_template(self.nas_production_html_template,
                                                cs=self.container_status_dict.get('nas_production'))
                 else:
@@ -52,7 +52,7 @@ class ContainerStatus(MethodView):
 
             return render_template(self.nas_production_html_template, cs=self.container_status_dict)
         else:
-            self.logger.error("File {} could not be read.".format(os.environ.get('container_status_path')))
+            container_status_app.logger.error("File {} could not be read.".format(os.environ.get('container_status_path')))
             return render_template(self.nas_production_html_template, status_file_err=True)
 
     def post(self):
