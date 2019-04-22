@@ -6,7 +6,10 @@ This site is for the SA3 Core Automation Team and is meant as an internal docume
 !!! warning
     This site talks about and documents the application url endpoints that are to be used only by SA3 Core Automation Team members. Sharing this documentation site with end users will expose functionality that could be triggered by them that could cause confusion in the end user community.
 
-!!! summary 
+!!! summary
+    !!! info
+        There is a development version of the site that can be used by developers. The base url is https://nas-status-dev.engapps.uscc.com
+    
     ### Nas Platform Status 
     https://nas-status.engapps.uscc.com
     
@@ -36,11 +39,4 @@ This site is for the SA3 Core Automation Team and is meant as an internal docume
     ### Add FAQs
     https://nas-status.engapps.uscc.com/nas/add/faq
     
-    Provides forms for the SA3 Automation Core Team to add, remove, maintain the FAQs displayed on the FAQs page. See the [Add FAQs](maintain_faqs.md) page for more information.
-
-### Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+    Provides forms for the SA3 Automation Core Team to add, remove, maintain the FAQs displayed on the FAQs page. See the [Add FAQs](add_faqs.md) page for more information.

@@ -33,4 +33,4 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Maintain Status: maintain_status.md
-  - Add FAQs: maintain_faqs.md
+  - Add FAQs: add_faqs.md
