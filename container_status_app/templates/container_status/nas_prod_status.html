@@ -136,8 +136,8 @@
                 <p>For questions, click the link to generate an email to the
                     <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Core Automation Engineering team.</a>
                 </p>
+                <a class="btn btn-outline-info btn-lg btn-block" href="{{ url_for('nas_faqs') }}">FAQs</a>
             </div>
-            <h5 class="card-footer m-0"><a href="{{ url_for('nas_faqs') }}" class="badge badge-primary btn-block">FAQs</a></h5>
         </div>
         <div class="card">
             <h5 class="card-header bg-secondary text-white">User Guides</h5>
@@ -211,13 +211,6 @@
                                 {% endfor %}
                             {% endif %}
                         {% endwith %}
-{#                        {% if email_registered is defined %}#}
-{#                            {% if email_registered is sameas True %}#}
-{#                                <div class="alert alert-success" role="alert">Email Registered Successfully</div>#}
-{#                            {% else %}#}
-{#                                <div class="alert alert-danger" role="alert">Error Registering Email. Please contact SA3 Core Automation Team.</div>#}
-{#                            {% endif %}#}
-{#                        {% endif %}#}
                     </div>
                 </div>
             </div>
