@@ -1,5 +1,5 @@
 # Flask
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from flask.views import MethodView
 
 # Container status app specific
@@ -97,9 +97,7 @@ class ContainerStatus(MethodView):
                     else:
                         Common.create_flash_message("Error registering email. Please contact SA3 Core Automation Team.")
 
-        return render_template(self.nas_production_html_template, cs=self.container_status_dict.get('nas_production'),
-                               list_registered_emails=self.notify_email_dict)
-                               # email_registered=write_notify_email_file_rc)
+        return redirect(url_for("container_status"))
 
     def delete_email(self):
         """
