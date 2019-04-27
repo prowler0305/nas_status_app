@@ -10,8 +10,8 @@ class EmailServices(object):
         Encapsulates ability to send email using USCC mail server
         """
         self.message_object = EmailMessage()
-        self.mail_server_url = "Corpmta.uscc.com"
-        self.mail_server_port = 25
+        self.mail_server_url = container_status_app.config.get('USCC_MAIL_SERVER_URL')
+        self.mail_server_port = container_status_app.config.get('USCC_MAIL_SERVER_PORT')
         self.subject = subject
         self.from_address = from_address
         self.to_address = to_address
