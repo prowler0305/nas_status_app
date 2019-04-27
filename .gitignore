@@ -41,7 +41,7 @@ container_status_app/local_test_library/copy_*
 container_status_app/local_test_library/backup_faq_data.json
 container_status_app/local_test_library/container_status.json
 container_status_app/local_test_library/upload_example.txt
-container_status_app/local_test_library/notify_emails_orgin.json
+container_status_app/local_test_library/notify_emails_per_app.json
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

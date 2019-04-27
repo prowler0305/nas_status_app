@@ -20,6 +20,9 @@ class ContainerStatus(MethodView):
                                    to_addr='Andrew.Spear@uscellular.com',
                                    content='There will be an outage with the NAS Automation Platform on Saturday')
         self.nas_production_html_template = 'container_status/nas_prod_status.html'
+        self.base_notify_emails_json_structure = '{"agg_router_health_check": {"email_list": []}, ' \
+                                                 '"b2b": {"email_list": []}, "ethersam": {"email_list": []}, ' \
+                                                 '"mvlan": {"email_list": []}, "segw_health_check": {"email_list": []}}'
 
     def get(self):
         """
@@ -38,7 +41,7 @@ class ContainerStatus(MethodView):
                         if read_email_rc and type(self.notify_email_dict) is dict:
                             return render_template(self.nas_production_html_template,
                                                    cs=self.container_status_dict.get('nas_production'),
-                                                   list_registered_emails=self.notify_email_dict.get('email_address_list'))
+                                                   list_registered_emails=self.notify_email_dict)
                         else:
                             return render_template(self.nas_production_html_template,
                                                    cs=self.container_status_dict.get('nas_production'))
@@ -60,23 +63,72 @@ class ContainerStatus(MethodView):
         :return: Re-renders the page with the message of whether the email address was registered successfully or not.
         """
 
-        write_notify_email_file_rc = False
         read_status_file_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
         if read_status_file_rc:
-            if not Common.check_path_exists(os.environ.get('notify_emails_path')):
-                with open(os.environ.get('notify_emails_path'), 'w+') as emfh:
-                    emfh.write('{"email_address_list": []}')
+            if request.form.get('add_delete_email_radio') == 'delete':
+                self.delete_email()
+            else:
+                write_notify_email_file_rc = False
+                if not Common.check_path_exists(os.environ.get('notify_emails_path')):
+                    with open(os.environ.get('notify_emails_path'), 'w+') as emfh:
+                        emfh.write(self.base_notify_emails_json_structure)
 
-            read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
-            if read_notify_email_file_rc:
-                if request.form.get('email_addr') not in self.notify_email_dict.get('email_address_list'):
-                    self.notify_email_dict.get('email_address_list').append(request.form.get('email_addr'))
+                read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
+                if read_notify_email_file_rc:
+                    if request.form.get('app_email_register_radio') != 'ALL':
+                        app_email_list = self.notify_email_dict.get(request.form.get('app_email_register_radio')).get('email_list')
+                        if request.form.get('email_addr') not in app_email_list:
+                            app_email_list.append(request.form.get('email_addr'))
+                            write_notify_email_file_rc, write_info = Common.rw_json_file(os.environ.get('notify_emails_path'),
+                                                                                         mode='write',
+                                                                                         output_dict=self.notify_email_dict)
+                        else:
+                            write_notify_email_file_rc = True
+                    else:
+                        for app_email_dict in self.notify_email_dict.values():
+                            if request.form.get('email_addr') not in app_email_dict.get('email_list'):
+                                app_email_dict.get('email_list').append(request.form.get('email_addr'))
+
+                        write_notify_email_file_rc, write_info = Common.rw_json_file(os.environ.get('notify_emails_path'),
+                                                                                     mode='write',
+                                                                                     output_dict=self.notify_email_dict)
+                    if write_notify_email_file_rc:
+                        Common.create_flash_message("Email registered Successfully")
+                    else:
+                        Common.create_flash_message("Error registering email. Please contact SA3 Core Automation Team.")
+
+        return render_template(self.nas_production_html_template, cs=self.container_status_dict.get('nas_production'),
+                               list_registered_emails=self.notify_email_dict)
+                               # email_registered=write_notify_email_file_rc)
+
+    def delete_email(self):
+        """
+        Deletes the email address from the requested app or all apps from the form in the Notifications card
+        :return:
+        """
+        write_notify_email_file_rc = False
+
+        read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
+        if read_notify_email_file_rc:
+            if request.form.get('app_email_register_radio') != 'ALL':
+                app_email_list = self.notify_email_dict.get(request.form.get('app_email_register_radio')).get('email_list')
+                if request.form.get('email_addr') in app_email_list:
+                    app_email_list.remove(request.form.get('email_addr'))
                     write_notify_email_file_rc, write_info = Common.rw_json_file(os.environ.get('notify_emails_path'),
                                                                                  mode='write',
                                                                                  output_dict=self.notify_email_dict)
                 else:
                     write_notify_email_file_rc = True
+            else:
+                for app_email_dict in self.notify_email_dict.values():
+                    if request.form.get('email_addr') in app_email_dict.get('email_list'):
+                        app_email_dict.get('email_list').remove(request.form.get('email_addr'))
 
-        return render_template(self.nas_production_html_template, cs=self.container_status_dict.get('nas_production'),
-                               list_registered_emails=self.notify_email_dict.get('email_address_list'),
-                               email_registered=write_notify_email_file_rc)
+                write_notify_email_file_rc, write_info = Common.rw_json_file(os.environ.get('notify_emails_path'),
+                                                                             mode='write',
+                                                                             output_dict=self.notify_email_dict)
+        if write_notify_email_file_rc:
+            Common.create_flash_message("Email Deleted Successfully")
+        else:
+            Common.create_flash_message("Error deleting email. Please contact SA3 Core Automation Team.")
+        return

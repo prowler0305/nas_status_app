@@ -18,224 +18,265 @@
 
                 </div>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card-deck">
-                            <div class="card bg-dark">
-                                {% if cs.overall_status == "ACTIVE" %}
-                                    <h5 class="card-header text-white">NAS Automation Platform Version 1 <span class="badge-pill badge-success">{{ cs.overall_status }}</span></h5>
-                                {% else %}
-                                    <h5 class="card-header text-white">NAS Automation Platform Version 1 <span class="badge-pill badge-danger">{{ cs.overall_status }}</span></h5>
-                                {% endif %}
-                                <div class="card-body">
-                                    <div class="card-deck">
-                                        <div class="card">
-                                            <h5 class="card-header bg-danger text-white">Not Available</h5>
-                                            <div class="card-body">
-                                                <ul class="list-group">
-                                                    {% for application, app_status in cs.applications.items() %}
-                                                        {% if cs.overall_status == 'NOT ACTIVE' %}
-                                                            {% set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
-                                                            {% set temp = app_status.update({'additional_info': ""}) %}
-                                                        {% endif %}
-                                                        {% if app_status.status == 'NOT ACTIVE' %}
-                                                            <li class="list-group-item list-group-item-danger">
-                                                                {{application}}
-                                                                {% if app_status.additional_info is defined and app_status.additional_info != '' %}
-                                                                    <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
-                                                                {%  endif %}
-                                                            </li>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </ul>
-                                                {% if cs.overall_status == 'NOT ACTIVE'  %}
-                                                    <div class="alert alert-info" role="alert">
-                                                        <p class="lead">Expected to be restored by:</p>
-                                                        <p class="lead">{{cs.restored_by}}</p>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        <div class="card">
-                                            <h5 class="card-header bg-success text-white">Available</h5>
-                                            <div class="card-body">
-                                                {% if cs.overall_status == 'ACTIVE' %}
-                                                    {% set nas_url= 'https://network-automation-services.engapps.uscc.com' %}
-                                                    <ul class="list-group">
-                                                        {% for application, app_status in cs.applications.items() %}
-                                                            {% if app_status.status == 'ACTIVE' %}
-                                                                <li class="list-group-item list-group-item-{{ app_status.coloring }}">
-                                                                    <a href="{{ nas_url }}">{{application}}</a>
-                                                                </li>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    </ul>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card bg-dark">
-                                {% if cs.p2_overall_status == "ACTIVE" %}
-                                    <h5 class="card-header text-white">NAS Automation Platform Version 2 <span class="badge-pill badge-success">{{ cs.p2_overall_status }}</span></h5>
-                                {% else %}
-                                    <h5 class="card-header text-white">NAS Automation Platform Version 2 <span class="badge-pill badge-danger">{{ cs.p2_overall_status }}</span></h5>
-                                {% endif %}
-                                <div class="card-body">
-                                    <div class="card-deck">
-                                        <div class="card">
-                                            <h5 class="card-header bg-danger text-white">Not Available</h5>
-                                            <div class="card-body">
-                                                <ul class="list-group">
-                                                    {% for application, app_status in cs.new_platform_apps.items() %}
-                                                        {% if cs.p2_overall_status == 'NOT ACTIVE' %}
-                                                            {% set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
-                                                            {% set temp = app_status.update({'additional_info': ""}) %}
-                                                        {% endif %}
-                                                        {% if app_status.status == 'NOT ACTIVE' %}
-                                                            <li class="list-group-item list-group-item-danger">{{application}}
-                                                                {% if app_status.additional_info is defined and app_status.additional_info != '' %}
-                                                                    <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
-                                                                {%  endif %}
-                                                            </li>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </ul>
-                                                {% if cs.p2_overall_status == 'NOT ACTIVE'  %}
-                                                    <div class="alert alert-info" role="alert">
-                                                        <p class="lead">Expected to be restored by:</p>
-                                                        <p class="lead">{{cs.p2_restored_by}}</p>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        <div class="card">
-                                            <h5 class="card-header bg-success text-white">Available</h5>
-                                            <div class="card-body">
-                                                {% if cs.p2_overall_status == 'ACTIVE' %}
-                                                    {% set nas2_url = 'https://network-automation-services-platform.engapps.uscc.com' %}
-                                                    <ul class="list-group">
-                                                        {% for application, app_status in cs.new_platform_apps.items() %}
-                                                            {% if app_status.status == 'ACTIVE' %}
-                                                                <li class="list-group-item list-group-item-{{ app_status.coloring }}">
-                                                                    <a href="{{ nas2_url }}">{{application}}</a>
-                                                                </li>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    </ul>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card-deck">
-                            <div class="card">
-                                <h5 class="card-header bg-secondary text-white">Contact Us</h5>
-                                <div class="card-body">
-                                    <p>For questions, click the link to generate an email to the
-                                        <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Core Automation Engineering team.</a>
-                                    </p>
-                                </div>
-                                <h5 class="card-footer m-0"><a href="{{ url_for('nas_faqs') }}" class="badge badge-primary btn-block">FAQs</a></h5>
-                            </div>
-                            <div class="card">
-                                <h5 class="card-header bg-secondary text-white">User Guides</h5>
-                                <div class="card-body">
-                                    <ul class="list-group">
-                                        {% for application, app_status in cs.applications.items() %}
-                                            <a href="{{ app_status.sharepoint }}" class="list-group-item list-group-item-action list-group-item-{{ app_status.coloring }} list-group-item-">
-                                                {{ application }}
-                                            </a>
-                                        {% endfor %}
-                                        {% for application, app_status in cs.new_platform_apps.items() %}
-                                            <a href="{{ app_status.sharepoint }}" class="list-group-item list-group-item-action list-group-item-{{ app_status.coloring }} list-group-item-">
-                                                {{ application }}
-                                            </a>
-                                        {% endfor %}
-                                    </ul>
-                                    <p class="card-text">
-                                        <small class="text-muted">If presented with the message "Sorry, this site hasn't been shared with you." after clicking a link please reach out to the project owner to have them add you.</small>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <h5 class="card-header bg-info">Notifications</h5>
-                            <div class="card-body">
-                                <form method="POST">
-                                    <div class="form-group">
-                                        <label for="emailFormControl">Enter an Email address to receive notifications related to the NAS Platform and its applications.</label>
-                                        <input type="email" class="form-control" id="emailFormControl" placeholder="name@example.com" name="email_addr" required>
-                                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
-                                    </div>
-                                </form>
-                                {% if email_registered is defined %}
-                                    {% if email_registered is sameas True %}
-                                        <div class="alert alert-success" role="alert">Email Registered Successfully</div>
-                                    {% else %}
-                                        <div class="alert alert-danger" role="alert">Error Registering Email. Please contact SA3 Core Automation Team.</div>
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {#    <div class="container">#}
-        {#        <div class="col-auto">#}
-            <div class="accordion" id="accordionEmailList">
-                <div class="card">
-                    <div class="card-header" id="headingOne">
-                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            <h5>List of Registered Emails</h5>
-                        </button>
-                    </div>
-
-                    <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordionEmailList">
+    <div class="card-deck mx-1">
+        <div class="card bg-dark">
+            {% if cs.overall_status == "ACTIVE" %}
+                <h5 class="card-header text-white">NAS Automation Platform Version 1 <span class="badge-pill badge-success">{{ cs.overall_status }}</span></h5>
+            {% else %}
+                <h5 class="card-header text-white">NAS Automation Platform Version 1 <span class="badge-pill badge-danger">{{ cs.overall_status }}</span></h5>
+            {% endif %}
+            <div class="card-body">
+                <div class="card-deck">
+                    <div class="card">
+                        <h5 class="card-header bg-danger text-white">Not Available</h5>
                         <div class="card-body">
-                            <small class="text-muted">Can search for an email address using the browser "Find". Usually activated using the keyboard shortcut "Ctl+F"</small>
-                            {% if list_registered_emails is defined %}
-                                {{ list_registered_emails|length }}
-                                {% if list_registered_emails|length > 10 %}
-                                    <div class="row">
-                                        {% for email in list_registered_emails %}
-                                            <div class="col p-1">
-                                                <ul class="list-group">
-                                                    <li class="list-group-item">{{ email }}</li>
-                                                </ul>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    <ul class="list-group">
-                                        {% for email in list_registered_emails %}
-                                            <li class="list-group-item">{{ email }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            {% else %}
-                                <div class="alert alert-danger" role="alert">Internal Error: Current list of registered emails couldn't be retrieved please contact SA3 Core
-                                    Automation Team</div>
+                            <ul class="list-group">
+                                {% for application, app_status in cs.applications.items() %}
+                                    {% if cs.overall_status == 'NOT ACTIVE' %}
+                                        {% set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
+                                        {% set temp = app_status.update({'additional_info': ""}) %}
+                                    {% endif %}
+                                    {% if app_status.status == 'NOT ACTIVE' %}
+                                        <li class="list-group-item list-group-item-danger">
+                                            {{application}}
+                                            {% if app_status.additional_info is defined and app_status.additional_info != '' %}
+                                                <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
+                                            {%  endif %}
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            {% if cs.overall_status == 'NOT ACTIVE'  %}
+                                <div class="alert alert-info" role="alert">
+                                    <p class="lead">Expected to be restored by:</p>
+                                    <p class="lead">{{cs.restored_by}}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h5 class="card-header bg-success text-white">Available</h5>
+                        <div class="card-body">
+                            {% if cs.overall_status == 'ACTIVE' %}
+                                {% set nas_url= 'https://network-automation-services.engapps.uscc.com' %}
+                                <ul class="list-group">
+                                    {% for application, app_status in cs.applications.items() %}
+                                        {% if app_status.status == 'ACTIVE' %}
+                                            <li class="list-group-item list-group-item-{{ app_status.coloring }}">
+                                                <a href="{{ nas_url }}">{{application}}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-        {#        </div>#}
-        {#    </div>#}
+        </div>
+        <div class="card bg-dark">
+            {% if cs.p2_overall_status == "ACTIVE" %}
+                <h5 class="card-header text-white">NAS Automation Platform Version 2 <span class="badge-pill badge-success">{{ cs.p2_overall_status }}</span></h5>
+            {% else %}
+                <h5 class="card-header text-white">NAS Automation Platform Version 2 <span class="badge-pill badge-danger">{{ cs.p2_overall_status }}</span></h5>
+            {% endif %}
+            <div class="card-body">
+                <div class="card-deck">
+                    <div class="card">
+                        <h5 class="card-header bg-danger text-white">Not Available</h5>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                {% for application, app_status in cs.new_platform_apps.items() %}
+                                    {% if cs.p2_overall_status == 'NOT ACTIVE' %}
+                                        {% set temp = app_status.update({'status': 'NOT ACTIVE'}) %}
+                                        {% set temp = app_status.update({'additional_info': ""}) %}
+                                    {% endif %}
+                                    {% if app_status.status == 'NOT ACTIVE' %}
+                                        <li class="list-group-item list-group-item-danger">{{application}}
+                                            {% if app_status.additional_info is defined and app_status.additional_info != '' %}
+                                                <p class="alert alert-info" role="alert">{{ app_status.additional_info }}</p>
+                                            {%  endif %}
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            {% if cs.p2_overall_status == 'NOT ACTIVE'  %}
+                                <div class="alert alert-info" role="alert">
+                                    <p class="lead">Expected to be restored by:</p>
+                                    <p class="lead">{{cs.p2_restored_by}}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h5 class="card-header bg-success text-white">Available</h5>
+                        <div class="card-body">
+                            {% if cs.p2_overall_status == 'ACTIVE' %}
+                                {% set nas2_url = 'https://network-automation-services-platform.engapps.uscc.com' %}
+                                <ul class="list-group">
+                                    {% for application, app_status in cs.new_platform_apps.items() %}
+                                        {% if app_status.status == 'ACTIVE' %}
+                                            <li class="list-group-item list-group-item-{{ app_status.coloring }}">
+                                                <a href="{{ nas2_url }}">{{application}}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-deck mx-1">
+        <div class="card">
+            <h5 class="card-header bg-secondary text-white">Contact Us</h5>
+            <div class="card-body">
+                <p>For questions, click the link to generate an email to the
+                    <a href="mailto:USCDLSA3AutomationEngineering@uscellular.com">SA3 Core Automation Engineering team.</a>
+                </p>
+            </div>
+            <h5 class="card-footer m-0"><a href="{{ url_for('nas_faqs') }}" class="badge badge-primary btn-block">FAQs</a></h5>
+        </div>
+        <div class="card">
+            <h5 class="card-header bg-secondary text-white">User Guides</h5>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for application, app_status in cs.applications.items() %}
+                        <a href="{{ app_status.sharepoint }}" class="list-group-item list-group-item-action list-group-item-{{ app_status.coloring }} list-group-item-">
+                            {{ application }}
+                        </a>
+                    {% endfor %}
+                    {% for application, app_status in cs.new_platform_apps.items() %}
+                        <a href="{{ app_status.sharepoint }}" class="list-group-item list-group-item-action list-group-item-{{ app_status.coloring }} list-group-item-">
+                            {{ application }}
+                        </a>
+                    {% endfor %}
+                </ul>
+                <p class="card-text">
+                    <small class="text-muted">If presented with the message "Sorry, this site hasn't been shared with you." after clicking a link please reach out to the project owner to have them add you.</small>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <h5 class="card-header bg-info">Notifications</h5>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="card-group">
+                                <div class="card border-light">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="add_delete_email_radio" id="addEmailRadio" value="add" required checked>
+                                        <label class="form-check-label" for="addEmailRadio">Add</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="add_delete_email_radio" id="deleteEmailRadio" value="delete">
+                                        <label class="form-check-label" for="deleteEmailRadio">Delete</label>
+                                    </div>
+                                </div>
+                                <div class="card border-light">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="app_email_register_radio" id="allRadio" value="ALL" required>
+                                        <label class="form-check-label" for="allRadio">ALL</label>
+                                    </div>
+                                    {% for application in list_registered_emails.keys() %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="app_email_register_radio" id="{{ application }}Radio" value="{{ application }}" required>
+                                            <label class="form-check-label" for="{{ application }}Radio">{{ application.capitalize()|replace("_", " ") }}</label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="emailFormControl">Enter an Email address to receive notifications related to the NAS Platform and its applications.</label>
+                                <input type="email" class="form-control" id="emailFormControl" placeholder="name@example.com" name="email_addr" required>
+                                <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                            </div>
+                        </form>
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if 'Error' in message %}
+                                        {% set alert_type = 'alert-danger' %}
+                                    {% else %}
+                                        {% set alert_type = 'alert-success' %}
+                                    {% endif %}
+                                        <div class="alert {{ alert_type }}" role="alertdialog">
+                                            {{ message }}
+                                        </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+{#                        {% if email_registered is defined %}#}
+{#                            {% if email_registered is sameas True %}#}
+{#                                <div class="alert alert-success" role="alert">Email Registered Successfully</div>#}
+{#                            {% else %}#}
+{#                                <div class="alert alert-danger" role="alert">Error Registering Email. Please contact SA3 Core Automation Team.</div>#}
+{#                            {% endif %}#}
+{#                        {% endif %}#}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header">
+                        Registered Emails
+                    </div>
+                    <div class="card-body">
+                        {% if list_registered_emails is defined %}
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="list-group" id="list-tab" role="tablist">
+                                        {% for app_name, apps_email_dict in list_registered_emails.items() %}
+                                            <a class="list-group-item list-group-item-action {% if loop.index == 1 %}active{% endif %}" id="{{ app_name }}-email-list" data-toggle="list" href="#list-{{ app_name }}" role="tab">
+                                                {{ app_name|replace("_", " ")|upper() }}
+                                                <span class="badge badge-secondary badge-pill">{{ apps_email_dict.email_list|length }}</span>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-9">
+                                    <div class="tab-content" id="nav-tabContent">
+                                        {% for app_name, apps_email_dict in list_registered_emails.items() %}
+                                            <div class="tab-pane fade {% if loop.index == 1 %} show active{% endif %}" id="list-{{ app_name }}" role="tabpanel" aria-labelledby="{{ app_name }}-email-list">
+                                                {% if apps_email_dict.email_list| length > 10 %}
+                                                    <div class="row">
+                                                        {% for email in apps_email_dict.email_list %}
+                                                            <div class="col-sm-3 p-0">
+                                                                <ul class="list-group">
+                                                                    <li class="list-group-item">{{ email }}</li>
+                                                                </ul>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <ul class="list-group">
+                                                        {% for email in apps_email_dict.email_list %}
+                                                            <li class="list-group-item">{{ email }}</li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-danger" role="alert">Internal Error: Current list of registered emails couldn't be retrieved please contact SA3 Core
+                                Automation Team
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    </div>
             <div class="card border-warning m-3">
                 <div class="card-body">
                     <h5 class="card-title">Known Issues</h5>
