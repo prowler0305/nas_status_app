@@ -31,6 +31,7 @@ class SetConfigMaps(object):
 
         self.config_mapper[os.environ.get('container_status_config_path')] = os.environ.get('container_status_path')
         self.config_mapper[os.environ.get('faq_data_config_path')] = os.environ.get('faq_data_path')
+        self.config_mapper[os.environ.get('notify_emails_config_path')] = os.environ.get('notify_emails_path')
 
     def _container_status_config(self, config_mapper_dict):
         """
