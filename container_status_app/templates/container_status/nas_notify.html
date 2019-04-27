@@ -189,14 +189,23 @@
                                             </li>
                                             {% for app, app_status_data in nas_prod_status_data.applications.items() %}
                                                 <li class="list-group-item">
-                                                    {% if app_status_data.status == 'ACTIVE' %}
+                                                    {% if app_status_data.status == 'ACTIVE' and nas_prod_status_data.overall_status == 'ACTIVE' %}
                                                         {% set app_badge_type = 'badge-success' %}
                                                     {% else %}
                                                         {% set app_badge_type = 'badge-danger' %}
                                                     {% endif %}
-                                                    <h5>{{ app }}: <span class="badge {{ app_badge_type }}">{{ app_status_data.status }}</span></h5>
+                                                    <h5>
+                                                        {{ app }}:
+                                                        <span class="badge {{ app_badge_type }}">
+                                                            {% if nas_prod_status_data.overall_status == 'ACTIVE' %}
+                                                                {{ app_status_data.status }}
+                                                            {% else %}
+                                                                NOT ACTIVE
+                                                            {% endif %}
+                                                        </span>
+                                                    </h5>
                                                     <div class="custom-control custom-switch">
-                                                        {% if app_status_data.status == 'ACTIVE' %}
+                                                        {% if app_status_data.status == 'ACTIVE' and nas_prod_status_data.overall_status == 'ACTIVE' %}
                                                             {% set app_level_check_it = 'checked' %}
                                                         {% endif %}
                                                         <input type="checkbox" class="custom-control-input" name="{{ app }}_status_switch" id="{{ app }}StatusSwitch" {{ app_level_check_it }}>
@@ -242,14 +251,23 @@
                                             </li>
                                             {% for app, app_status_data in nas_prod_status_data.new_platform_apps.items() %}
                                                 <li class="list-group-item">
-                                                    {% if app_status_data.status == 'ACTIVE' %}
+                                                    {% if app_status_data.status == 'ACTIVE' and nas_prod_status_data.p2_overall_status == 'ACTIVE' %}
                                                         {% set app_badge_type = 'badge-success' %}
                                                     {% else %}
                                                         {% set app_badge_type = 'badge-danger' %}
                                                     {% endif %}
-                                                    <h5>{{ app }}: <span class="badge {{ app_badge_type }}">{{ app_status_data.status }}</span></h5>
+                                                    <h5>
+                                                        {{ app }}:
+                                                        <span class="badge {{ app_badge_type }}">
+                                                            {% if nas_prod_status_data.p2_overall_status == 'ACTIVE' %}
+                                                                {{ app_status_data.status }}
+                                                            {% else %}
+                                                                NOT ACTIVE
+                                                            {% endif %}
+                                                        </span>
+                                                    </h5>
                                                     <div class="custom-control custom-switch">
-                                                        {% if app_status_data.status == 'ACTIVE' %}
+                                                        {% if app_status_data.status == 'ACTIVE' and nas_prod_status_data.p2_overall_status == 'ACTIVE' %}
                                                             {% set app_level_check_it = 'checked' %}
                                                         {% endif %}
                                                         <input type="checkbox" class="custom-control-input" name="{{ app }}_status_switch" id="{{ app }}StatusSwitch" {{ app_level_check_it }}>

@@ -12,7 +12,6 @@ import os
 import shutil
 
 
-
 class NasNotifications(MethodView):
     def __init__(self):
 
@@ -40,31 +39,18 @@ class NasNotifications(MethodView):
 
     def post(self):
         """
-        Receives control when the Submit button is clicked in the Notifications Card to register an email address.
-        :return: Re-renders the page with the message of whether the email address was registered successfully or not.
+        Receives control when the Submit button is clicked in either of the send email forms
+
+        :return: Message indicating if the email was successfully sent or not.
         """
 
-        read_json_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
-        nas_production_dict = self.container_status_dict.get('nas_production')
-
         if 'toggle_switch_form' in list(request.form.keys()) or 'p2_toggle_switch_form' in list(request.form.keys()):
-            if nas_production_dict is not None and nas_production_dict.get('display_name') == 'NAS Automation Platform':
-                # toggle_switch_names = []
-                if 'toggle_switch_form' in list(request.form.keys()):
-                    toggle_switch_names = self.create_list_of_toggle_names(nas_production_dict.get('applications').keys())
-                    status_switch_name = nas_production_dict.get('display_name') + '_status_switch'
-                    additional_info_name = None
-                    app_toggle_info_tuple = (status_switch_name, additional_info_name)
-                    toggle_switch_names.append(app_toggle_info_tuple)
-                    self.put(list_o_switch_name=toggle_switch_names)
-                if 'p2_toggle_switch_form' in list(request.form.keys()):
-                    toggle_switch_names = self.create_list_of_toggle_names(nas_production_dict.get('new_platform_apps').keys())
-                    status_switch_name = nas_production_dict.get('p2_display_name') + '_status_switch'
-                    additional_info_name = None
-                    app_toggle_info_tuple = (status_switch_name, additional_info_name)
-                    toggle_switch_names.append(app_toggle_info_tuple)
-                    self.put_p2(list_o_switch_name=toggle_switch_names)
+            self.toggle_platform_status()
+
         else:
+            read_json_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
+            nas_production_dict = self.container_status_dict.get('nas_production')
+
             if 'nas_notify_form' in list(request.form.keys()):
                 if self.send_email_notification():
                     Common.create_flash_message("Email sent Successfully", category_request='info')
@@ -104,9 +90,14 @@ class NasNotifications(MethodView):
 
             read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
             if read_notify_email_file_rc:
+                dict_of_emails = dict()
+                for app, app_email_data in self.notify_email_dict.items():
+                    if app_email_data.get('platform') in request.form.get('platform_name'):
+                        dict_of_emails[app] = app_email_data.get('email_list')
+
                 email = EmailServices(subject=self.nas_down_email.get('subject').format(request.form.get('outage_start_date')),
                                       from_address=self.nas_down_email.get('from_addr'),
-                                      to_address=self.notify_email_dict.get('email_address_list'))
+                                      to_address=Common.flatten_list(dict_of_emails))
 
                 with open(self.email_template_temp_file) as email_fh:
                     email_sent = email.send_email(email_fh.read())
@@ -120,6 +111,8 @@ class NasNotifications(MethodView):
                     if request.form.get('platform_name') == 'old_platform':
                         overall_status = 'overall_status'
                         restored_by = 'restored_by'
+                        # for app_metadata_dict in self.container_status_dict.get('nas_production').get('applications').values():
+                        #     app_metadata_dict['status'] = 'NOT ACTIVE'
                     else:
                         overall_status = 'p2_overall_status'
                         restored_by = 'p2_restored_by'
@@ -140,6 +133,34 @@ class NasNotifications(MethodView):
 
         return render_template(self.nas_notify_html_template,
                                nas_prod_status_data=self.container_status_dict.get('nas_production'))
+
+    def toggle_platform_status(self):
+        """
+        Called when the one of the forms containing the platform toggle switches are submitted. Contains the high level
+        logic and then calls the appropriate put() method.
+
+        :return:
+        """
+        read_json_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
+        nas_production_dict = self.container_status_dict.get('nas_production')
+
+        if nas_production_dict is not None and nas_production_dict.get('display_name') == 'NAS Automation Platform':
+            # toggle_switch_names = []
+            if 'toggle_switch_form' in list(request.form.keys()):
+                toggle_switch_names = self.create_list_of_toggle_names(nas_production_dict.get('applications').keys())
+                status_switch_name = nas_production_dict.get('display_name') + '_status_switch'
+                additional_info_name = None
+                app_toggle_info_tuple = (status_switch_name, additional_info_name)
+                toggle_switch_names.append(app_toggle_info_tuple)
+                self.put(list_o_switch_name=toggle_switch_names)
+            if 'p2_toggle_switch_form' in list(request.form.keys()):
+                toggle_switch_names = self.create_list_of_toggle_names(nas_production_dict.get('new_platform_apps').keys())
+                status_switch_name = nas_production_dict.get('p2_display_name') + '_status_switch'
+                additional_info_name = None
+                app_toggle_info_tuple = (status_switch_name, additional_info_name)
+                toggle_switch_names.append(app_toggle_info_tuple)
+                self.put_p2(list_o_switch_name=toggle_switch_names)
+        return
 
     def send_email_notification(self):
         """
