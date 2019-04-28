@@ -1,1 +1,1 @@
-{"agg_router_health_check": {"email_list": [], "platform": "old"}, "b2b": {"email_list": [], "platform": "new"}, "ethersam": {"email_list": [], "platform": "old"}, "mvlan": {"email_list": [], "platform": "old"}, "segw_health_check": {"email_list": [], "platform": "old"}}
+{"agg router health check": {"email_list": [], "platform": "old"}, "b2b": {"email_list": [], "platform": "new"}, "ethersam": {"email_list": [], "platform": "old"}, "mvlan": {"email_list": [], "platform": "old"}, "segw health check": {"email_list": [], "platform": "old"}}

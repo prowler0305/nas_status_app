@@ -186,7 +186,7 @@
                                     {% for application in list_registered_emails.keys() %}
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="app_email_register_radio" id="{{ application }}Radio" value="{{ application }}" required>
-                                            <label class="form-check-label" for="{{ application }}Radio">{{ application.capitalize()|replace("_", " ") }}</label>
+                                            <label class="form-check-label" for="{{ application }}Radio">{{ application.capitalize() }}</label>
                                         </div>
                                     {% endfor %}
                                 </div>
