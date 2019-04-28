@@ -46,7 +46,6 @@ class NasNotifications(MethodView):
 
         if 'toggle_switch_form' in list(request.form.keys()) or 'p2_toggle_switch_form' in list(request.form.keys()):
             self.toggle_platform_status()
-
         else:
             read_json_rc, self.container_status_dict = Common.rw_json_file(file_path=os.environ.get('container_status_path'))
             nas_production_dict = self.container_status_dict.get('nas_production')
@@ -104,15 +103,16 @@ class NasNotifications(MethodView):
                 email_sent_message = "Outage notification email {}"
                 if email_sent:
                     container_status_app.logger.info(email_sent_message.format('sent'))
+                    Common.create_flash_message("Email sent Successfully", category_request='info')
                 else:
                     container_status_app.logger.error(email_sent_message.format('not sent'))
+                    Common.create_flash_message("Error sending email. Please Contact SA3 Core Automation Team.",
+                                                category_request='error')
 
                 if read_json_rc and nas_production_dict is not None:
                     if request.form.get('platform_name') == 'old_platform':
                         overall_status = 'overall_status'
                         restored_by = 'restored_by'
-                        # for app_metadata_dict in self.container_status_dict.get('nas_production').get('applications').values():
-                        #     app_metadata_dict['status'] = 'NOT ACTIVE'
                     else:
                         overall_status = 'p2_overall_status'
                         restored_by = 'p2_restored_by'
@@ -145,7 +145,6 @@ class NasNotifications(MethodView):
         nas_production_dict = self.container_status_dict.get('nas_production')
 
         if nas_production_dict is not None and nas_production_dict.get('display_name') == 'NAS Automation Platform':
-            # toggle_switch_names = []
             if 'toggle_switch_form' in list(request.form.keys()):
                 toggle_switch_names = self.create_list_of_toggle_names(nas_production_dict.get('applications').keys())
                 status_switch_name = nas_production_dict.get('display_name') + '_status_switch'
@@ -164,8 +163,9 @@ class NasNotifications(MethodView):
 
     def send_email_notification(self):
         """
+        Called by the POST method when the "Send Email Notification" form is submitted.
 
-        :return:
+        :return: True or false the email was sent.
         """
         email_sent_message = "Notification email {}"
         read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
@@ -174,9 +174,19 @@ class NasNotifications(MethodView):
                 send_from = self.default_from_email_addr
             else:
                 send_from = request.form.get('from_email_addr').strip() + '@uscellular.com'
+
+            if request.form.get('app_email_radio') == 'ALL':
+                dict_of_emails = dict()
+                for app, app_email_data in self.notify_email_dict.items():
+                    dict_of_emails[app] = app_email_data.get('email_list')
+                list_of_addr_to_send_to = Common.flatten_list(dict_of_emails)
+
+            else:
+                list_of_addr_to_send_to = self.notify_email_dict.get(request.form.get('app_email_radio').lower()).get('email_list')
+
             email = EmailServices(subject=request.form.get('email_subject'),
                                   from_address=send_from,
-                                  to_address=self.notify_email_dict.get('email_address_list'))
+                                  to_address=list_of_addr_to_send_to)
 
             email_sent = email.send_email(request.form.get('email_content'))
             if email_sent:
