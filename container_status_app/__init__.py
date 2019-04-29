@@ -20,7 +20,7 @@ def setup_logging():
 
 
 if os.environ.get('hostname'.upper()) is not None:
-    if 'container-status-app' in os.environ.get('hostname'.upper()):
+    if 'container-status' in os.environ.get('hostname'.upper()):
         with container_status_app.app_context():
             SetConfigMaps()
 
