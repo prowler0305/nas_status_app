@@ -20,9 +20,11 @@ class ContainerStatus(MethodView):
                                    to_addr='Andrew.Spear@uscellular.com',
                                    content='There will be an outage with the NAS Automation Platform on Saturday')
         self.nas_production_html_template = 'container_status/nas_prod_status.html'
-        self.base_notify_emails_json_structure = '{"agg_router_health_check": {"email_list": []}, ' \
-                                                 '"b2b": {"email_list": []}, "ethersam": {"email_list": []}, ' \
-                                                 '"mvlan": {"email_list": []}, "segw_health_check": {"email_list": []}}'
+        self.base_notify_emails_json_structure = '{"agg_router_health_check": {"email_list": [], "platform": "old"}, ' \
+                                                 '"b2b": {"email_list": [], "platform": "new"}, ' \
+                                                 '"ethersam": {"email_list": [], "platform": "old"}, ' \
+                                                 '"mvlan": {"email_list": [], "platform": "old"}, ' \
+                                                 '"segw_health_check": {"email_list": [], "platform": "old"}}'
 
     def get(self):
         """
@@ -37,6 +39,7 @@ class ContainerStatus(MethodView):
             if request.url_rule.rule == '/nas_status' or request.url_rule.rule == '/':
                 if 'nas_production' in self.container_status_dict:
                     if os.environ.get('notify_emails_path') is not None and os.environ.get('notify_emails_path') != '':
+                        self.create_emails_file()
                         read_email_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
                         if read_email_rc and type(self.notify_email_dict) is dict:
                             return render_template(self.nas_production_html_template,
@@ -69,9 +72,7 @@ class ContainerStatus(MethodView):
                 self.delete_email()
             else:
                 write_notify_email_file_rc = False
-                if not Common.check_path_exists(os.environ.get('notify_emails_path')):
-                    with open(os.environ.get('notify_emails_path'), 'w+') as emfh:
-                        emfh.write(self.base_notify_emails_json_structure)
+                self.create_emails_file()
 
                 read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
                 if read_notify_email_file_rc:
@@ -130,3 +131,15 @@ class ContainerStatus(MethodView):
         else:
             Common.create_flash_message("Error deleting email. Please contact SA3 Core Automation Team.")
         return
+
+    def create_emails_file(self):
+        """
+        Creates the JSON structure for the list of emails if it doesn't exist. Uses the base json structure defined as
+        a class attribute.
+
+        :return:
+        """
+
+        if not Common.check_path_exists(os.environ.get('notify_emails_path')):
+            with open(os.environ.get('notify_emails_path'), 'w+') as emfh:
+                emfh.write(self.base_notify_emails_json_structure)

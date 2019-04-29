@@ -183,12 +183,14 @@
                                         <input class="form-check-input" type="radio" name="app_email_register_radio" id="allRadio" value="ALL" required>
                                         <label class="form-check-label" for="allRadio">ALL</label>
                                     </div>
-                                    {% for application in list_registered_emails.keys() %}
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="app_email_register_radio" id="{{ application }}Radio" value="{{ application }}" required>
-                                            <label class="form-check-label" for="{{ application }}Radio">{{ application.capitalize() }}</label>
-                                        </div>
-                                    {% endfor %}
+                                    {% if list_registered_emails is defined %}
+                                        {% for application in list_registered_emails.keys() %}
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="app_email_register_radio" id="{{ application }}Radio" value="{{ application }}" required>
+                                                <label class="form-check-label" for="{{ application }}Radio">{{ application.capitalize() }}</label>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="form-group">
@@ -196,6 +198,11 @@
                                 <input type="email" class="form-control" id="emailFormControl" placeholder="name@example.com" name="email_addr" required>
                                 <button type="submit" class="btn btn-primary mt-2">Submit</button>
                             </div>
+                            {% if list_registered_emails is not defined %}
+                                <div class="alert alert-danger" role="alert">Internal Error: List of applications couldn't be retrieved please contact SA3 Core
+                                    Automation Team.
+                                </div>
+                            {% endif %}
                         </form>
                         {% with messages = get_flashed_messages() %}
                             {% if messages %}
