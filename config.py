@@ -28,8 +28,8 @@ class DevelopmentConfig(BaseConfig):
     PORT = 5000 if os.environ.get("PORT") is None else int(os.environ.get("PORT"))
     HOST = os.environ.get('HOST') or 'localhost'
     PREFERRED_URL_SCHEME = 'http'
-    USCC_MAIL_SERVER_URL = "localhost"
-    USCC_MAIL_SERVER_PORT = 1025
+    USCC_MAIL_SERVER_URL = "localhost" if os.environ.get('uscc_mail_server_url') is None else os.environ.get('uscc_mail_server_url')
+    USCC_MAIL_SERVER_PORT = 1025 if os.environ.get('uscc_mail_server_port') is None else int(os.environ.get('uscc_mail_server_port'))
     if os.environ.get('access_token_expiration') is not None:
         JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(seconds=int(os.environ.get('access_token_expiration')))
     if os.environ.get('refresh_token_expiration') is not None:
