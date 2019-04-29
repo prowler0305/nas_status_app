@@ -98,7 +98,7 @@ class ContainerStatus(MethodView):
                     else:
                         Common.create_flash_message("Error registering email. Please contact SA3 Core Automation Team.")
 
-        if os.environ.get('app_env') != 'config.DevelopmentConfig':
+        if os.environ.get('app_env') == 'config.DevelopmentConfig':
             return redirect(url_for("main_route"))
         else:
             return redirect(url_for("main_route", _external=True, _scheme='https'))
