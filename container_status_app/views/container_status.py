@@ -98,7 +98,7 @@ class ContainerStatus(MethodView):
                     else:
                         Common.create_flash_message("Error registering email. Please contact SA3 Core Automation Team.")
 
-        return redirect(url_for("main_route"))
+        return redirect(url_for("main_route", _external=True))
 
     def delete_email(self):
         """
