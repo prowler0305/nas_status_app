@@ -1,9 +1,9 @@
-import smtplib
-import logging
-from email.message import EmailMessage
+import os
+# import smtplib
+# from email.message import EmailMessage
 from flask_mail import Message
-import container_status_app
 from flask import current_app as container_status_app
+# from decorators import async_thread
 
 
 class EmailServices(object):
@@ -18,32 +18,41 @@ class EmailServices(object):
         self.from_address = from_address
         self.to_address = to_address
 
+    # @async_thread
+    # def send_async_email(self, msg):
+    #     with container_status_app.app_context():
+    #         container_status_app.extensions.get('mail').send(msg)
+
     def send_email(self, email_content: str, subject: str = None, from_address: str = None, to_address: list = None,
-                   attachment: str = None):
+                   attachment=None):
         """
 
         :param email_content: data to be put in the body of the email.
         :param subject: option to override class attribute if needed
         :param from_address: option to override class attribute if needed
         :param list to_address: option to override class attribute if needed
-        :param attachment: Path to a file to attach to the email
+        :param attachment: werkzeug.datastructures.FileStorage object from the request.files object
         :return: True/False
         """
 
-        # self.message_object.set_content(email_content)
         if subject is None:
             subject = self.subject
         if from_address is None:
-            from_address = self.from_address
+            if self.from_address is not None:
+                from_address = self.from_address
         if to_address is None:
             to_address = self.to_address
 
-        msg = Message(subject, sender=from_address, recipients=to_address)
+        if from_address is not None:
+            msg = Message(subject, sender=from_address, recipients=to_address)
+        else:
+            msg = Message(subject, recipients=to_address)
         msg.body = email_content
+        msg.html = email_content
         if attachment is not None:
-            with open(attachment) as fp:
-                msg.attach("example.txt", "image/png", fp.read())
-        container_status_app.mail.send(msg)
+            with open(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), attachment.filename)) as fp:
+                msg.attach(filename=attachment.filename, content_type=attachment.content_type, data=fp.read())
+        container_status_app.extensions.get('mail').send(msg)
         # self.message_object['Subject'] = subject
         # # msg['From'] = 'SA3CoreAutomationTeam@noreply.com'
         # self.message_object['From'] = from_address

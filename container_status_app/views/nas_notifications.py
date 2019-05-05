@@ -171,11 +171,15 @@ class NasNotifications(MethodView):
         email_sent_message = "Notification email {}"
         read_notify_email_file_rc, self.notify_email_dict = Common.rw_json_file(file_path=os.environ.get('notify_emails_path'))
         if read_notify_email_file_rc:
-            file = request.files.get('attachment_file')
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
+            file = request.files.get('attachment_file', None)
+            if request.files.get('attachment_file') is not None:
+                file = request.files.get('attachment_file')
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
+
             if request.form.get('from_email_addr') is None or request.form.get('from_email_addr') == '':
-                send_from = self.default_from_email_addr
+                # send_from = self.default_from_email_addr
+                send_from = None
             else:
                 send_from = request.form.get('from_email_addr').strip() + '@uscellular.com'
 
@@ -194,7 +198,7 @@ class NasNotifications(MethodView):
 
             # email_sent = email.send_email(request.form.get('email_content'))
             email_sent = email.send_email(request.form.get('email_content'),
-                                          attachment=os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
+                                          attachment=file)
             if email_sent:
                 container_status_app.logger.info(email_sent_message.format('sent'))
                 return True
