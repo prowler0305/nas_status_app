@@ -199,6 +199,8 @@ class NasNotifications(MethodView):
             # email_sent = email.send_email(request.form.get('email_content'))
             email_sent = email.send_email(request.form.get('email_content'),
                                           attachment=file)
+            if os.path.exists(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), file.filename)):
+                os.remove(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), file.filename))
             if email_sent:
                 container_status_app.logger.info(email_sent_message.format('sent'))
                 return True

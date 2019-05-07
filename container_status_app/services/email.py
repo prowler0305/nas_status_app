@@ -3,6 +3,7 @@ import os
 # from email.message import EmailMessage
 from flask_mail import Message
 from flask import current_app as container_status_app
+from container_status_app.common.common import Common
 # from decorators import async_thread
 
 
@@ -52,7 +53,11 @@ class EmailServices(object):
         if attachment is not None:
             with open(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), attachment.filename)) as fp:
                 msg.attach(filename=attachment.filename, content_type=attachment.content_type, data=fp.read())
-        container_status_app.extensions.get('mail').send(msg)
+        try:
+            container_status_app.extensions.get('mail').send(msg)
+        except AssertionError as ae:
+            Common.create_flash_message('Error: ' + str(ae), category_request='error')
+            return False
         # self.message_object['Subject'] = subject
         # # msg['From'] = 'SA3CoreAutomationTeam@noreply.com'
         # self.message_object['From'] = from_address
