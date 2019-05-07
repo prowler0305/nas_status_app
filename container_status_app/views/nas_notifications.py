@@ -175,6 +175,8 @@ class NasNotifications(MethodView):
             if request.files.get('attachment_file') is not None:
                 file = request.files.get('attachment_file')
                 filename = secure_filename(file.filename)
+                if not os.path.exists(container_status_app.config.get('UPLOAD_FOLDER')):
+                    os.makedirs(container_status_app.config.get('UPLOAD_FOLDER'))
                 file.save(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), filename))
 
             if request.form.get('from_email_addr') is None or request.form.get('from_email_addr') == '':
