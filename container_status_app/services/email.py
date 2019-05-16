@@ -49,7 +49,7 @@ class EmailServices(object):
         else:
             msg = Message(subject, recipients=to_address)
         msg.body = email_content
-        msg.html = email_content
+        # msg.html = email_content
         if attachment is not None:
             with open(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), attachment.filename)) as fp:
                 msg.attach(filename=attachment.filename, content_type=attachment.content_type, data=fp.read())
