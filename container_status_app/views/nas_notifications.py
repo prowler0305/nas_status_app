@@ -198,9 +198,7 @@ class NasNotifications(MethodView):
                                   from_address=send_from,
                                   to_address=list_of_addr_to_send_to)
 
-            # email_sent = email.send_email(request.form.get('email_content'))
-            email_sent = email.send_email(request.form.get('email_content'),
-                                          attachment=file)
+            email_sent = email.send_email(request.form.get('email_content'), attachment=file)
 
             if request.files.get('attachment_file') is not None:
                 if os.path.exists(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), file.filename)):

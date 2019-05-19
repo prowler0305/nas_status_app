@@ -4,6 +4,7 @@ import os
 from flask_mail import Message
 from flask import current_app as container_status_app
 from container_status_app.common.common import Common
+from werkzeug.utils import secure_filename
 # from decorators import async_thread
 
 
@@ -51,7 +52,7 @@ class EmailServices(object):
         msg.body = email_content
         # msg.html = email_content
         if attachment is not None:
-            with open(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), attachment.filename)) as fp:
+            with open(os.path.join(container_status_app.config.get('UPLOAD_FOLDER'), secure_filename(attachment.filename))) as fp:
                 msg.attach(filename=attachment.filename, content_type=attachment.content_type, data=fp.read())
         try:
             container_status_app.extensions.get('mail').send(msg)
