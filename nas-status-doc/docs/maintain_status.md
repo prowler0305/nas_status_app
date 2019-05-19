@@ -1,7 +1,7 @@
 # Maintain NAS Platform and Application Status
 SA3 Automation Core Team members can use the forms on this page to maintain the statuses displayed on the main page.
 
-## Generate EmailsNotifications
+## Generate Email Notifications
 Use the two forms to generate an email that will automatically include all the known email address registered. 
 
 ### Platform Outage
@@ -12,10 +12,16 @@ After the email is sent, the Platform status is set to =="NOT ACTIVE"== which in
 The **Outage End Date and time** will also be displayed on the main page as the **restored by** date and time.
 
 ### Send Email Notification
-Use this form to write a free form email to be sent to users. The **From email address** will default to a @noreply.com address if left blank.
+Use this form to write a free form email to be sent to users. The **From email address** will default to a @noreply.com address if left blank. Files can be attached to the email as well.
+
+!!! warning
+    Currently images can not be attached, otherwise an error will occur. If this occurs just load the page fresh and refill out the form, the previous email will not have been saved or sent. 
 
 ## Update NAS Platform and Application Status
 This form allows for the toggling of the status for each individual application and the overall NAS Platform.
 
 !!! note
     As indicated on the form, the status for the overall platform can only be toggled from =="NOT ACTIVE"== to =="ACTIVE"==. This is to ensure that the only way the status is being set to =="NOT ACTIVE"== is by sending out an Outage notification.
+
+!!! warning
+    Due to the architecture of the NAS Platform it is possible to have the base service parts of the platform active but each application could still be in inactive status separately. So when toggling the Platforms status to ==Active==, each applications status will also need to be toggled as well.
